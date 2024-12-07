@@ -58,7 +58,8 @@ const Index = () => {
           Use arrow keys to play:<br/>
           ← → to move<br/>
           ↓ to drop faster<br/>
-          ↑ to hard drop
+          ↑ to hard drop<br/>
+          Space to rotate
         </div>
       </div>
     </div>

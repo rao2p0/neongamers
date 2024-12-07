@@ -11,7 +11,8 @@ import {
   isValidMove,
   mergePieceToBoard,
   clearLines,
-  randomTetromino
+  randomTetromino,
+  rotateMatrix
 } from "@/utils/tetris";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -54,6 +55,36 @@ const Board = ({ isPlaying, onGameOver, onScoreUpdate, setNextPiece }: BoardProp
     const newPos = { ...position, x: position.x + dir };
     if (isValidMove(board, currentPiece, newPos)) {
       setPosition(newPos);
+    }
+  }, [board, currentPiece, position]);
+
+  const rotatePiece = useCallback(() => {
+    if (!currentPiece) return;
+
+    const piece = TETROMINOES[currentPiece];
+    const newShape = rotateMatrix(piece.shape);
+    const rotatedPiece = {
+      ...piece,
+      shape: newShape
+    };
+
+    // Check if the rotated piece would be in a valid position
+    const isValid = newShape.every((row, y) =>
+      row.every((cell, x) => {
+        if (!cell) return true;
+        const newX = position.x + x;
+        const newY = position.y + y;
+        return (
+          newX >= 0 &&
+          newX < BOARD_WIDTH &&
+          newY < BOARD_HEIGHT &&
+          (newY < 0 || board[newY][newX] === null)
+        );
+      })
+    );
+
+    if (isValid) {
+      TETROMINOES[currentPiece].shape = newShape;
     }
   }, [board, currentPiece, position]);
 
@@ -131,12 +162,15 @@ const Board = ({ isPlaying, onGameOver, onScoreUpdate, setNextPiece }: BoardProp
         case 'ArrowUp':
           hardDrop();
           break;
+        case ' ':
+          rotatePiece();
+          break;
       }
     };
 
     document.addEventListener('keydown', handleKeyPress);
     return () => document.removeEventListener('keydown', handleKeyPress);
-  }, [isPlaying, currentPiece, movePlayer, drop, hardDrop]);
+  }, [isPlaying, currentPiece, movePlayer, drop, hardDrop, rotatePiece]);
 
   // Render the game board with the current piece
   const gameBoard = board.map((row, y) => [...row]);
