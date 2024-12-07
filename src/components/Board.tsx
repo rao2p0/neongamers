@@ -29,6 +29,7 @@ const POINTS_PER_LINE = 100;
 const Board = ({ isPlaying, onGameOver, onScoreUpdate, setNextPiece }: BoardProps) => {
   const [board, setBoard] = useState<BoardType>(createEmptyBoard());
   const [currentPiece, setCurrentPiece] = useState<TetrominoType | null>(null);
+  const [currentShape, setCurrentShape] = useState<number[][]>([]);
   const [position, setPosition] = useState<Position>({ x: 0, y: 0 });
   const [dropTime, setDropTime] = useState<number | null>(null);
   const { toast } = useToast();
@@ -38,6 +39,7 @@ const Board = ({ isPlaying, onGameOver, onScoreUpdate, setNextPiece }: BoardProp
     const newPiece = randomTetromino();
     const nextPiece = randomTetromino();
     setCurrentPiece(newPiece);
+    setCurrentShape(TETROMINOES[newPiece].shape);
     setNextPiece(nextPiece);
     setPosition({ x: Math.floor(BOARD_WIDTH / 2) - 1, y: 0 });
     setDropTime(INITIAL_DROP_TIME);
@@ -53,20 +55,15 @@ const Board = ({ isPlaying, onGameOver, onScoreUpdate, setNextPiece }: BoardProp
     if (!currentPiece) return;
     
     const newPos = { ...position, x: position.x + dir };
-    if (isValidMove(board, currentPiece, newPos)) {
+    if (isValidMove(board, currentPiece, newPos, currentShape)) {
       setPosition(newPos);
     }
-  }, [board, currentPiece, position]);
+  }, [board, currentPiece, position, currentShape]);
 
   const rotatePiece = useCallback(() => {
     if (!currentPiece) return;
 
-    const piece = TETROMINOES[currentPiece];
-    const newShape = rotateMatrix(piece.shape);
-    const rotatedPiece = {
-      ...piece,
-      shape: newShape
-    };
+    const newShape = rotateMatrix([...currentShape]);
 
     // Check if the rotated piece would be in a valid position
     const isValid = newShape.every((row, y) =>
@@ -84,19 +81,19 @@ const Board = ({ isPlaying, onGameOver, onScoreUpdate, setNextPiece }: BoardProp
     );
 
     if (isValid) {
-      TETROMINOES[currentPiece].shape = newShape;
+      setCurrentShape(newShape);
     }
-  }, [board, currentPiece, position]);
+  }, [board, currentPiece, position, currentShape]);
 
   const drop = useCallback(() => {
     if (!currentPiece) return;
 
     const newPos = { ...position, y: position.y + 1 };
-    if (isValidMove(board, currentPiece, newPos)) {
+    if (isValidMove(board, currentPiece, newPos, currentShape)) {
       setPosition(newPos);
     } else {
       // Merge the piece into the board
-      const newBoard = mergePieceToBoard(board, currentPiece, position);
+      const newBoard = mergePieceToBoard(board, currentPiece, position, currentShape);
       const { newBoard: clearedBoard, linesCleared } = clearLines(newBoard);
       
       if (linesCleared > 0) {
@@ -112,15 +109,16 @@ const Board = ({ isPlaying, onGameOver, onScoreUpdate, setNextPiece }: BoardProp
       // Get next piece
       const nextPiece = randomTetromino();
       setCurrentPiece(nextPiece);
+      setCurrentShape(TETROMINOES[nextPiece].shape);
       setPosition({ x: Math.floor(BOARD_WIDTH / 2) - 1, y: 0 });
       setNextPiece(randomTetromino());
       
       // Check for game over
-      if (!isValidMove(clearedBoard, nextPiece, { x: Math.floor(BOARD_WIDTH / 2) - 1, y: 0 })) {
+      if (!isValidMove(clearedBoard, nextPiece, { x: Math.floor(BOARD_WIDTH / 2) - 1, y: 0 }, TETROMINOES[nextPiece].shape)) {
         onGameOver();
       }
     }
-  }, [board, currentPiece, position, onScoreUpdate, setNextPiece, onGameOver, toast]);
+  }, [board, currentPiece, currentShape, position, onScoreUpdate, setNextPiece, onGameOver, toast]);
 
   useEffect(() => {
     if (!isPlaying || !dropTime) return;
@@ -136,12 +134,12 @@ const Board = ({ isPlaying, onGameOver, onScoreUpdate, setNextPiece }: BoardProp
     if (!currentPiece) return;
     
     let newY = position.y;
-    while (isValidMove(board, currentPiece, { ...position, y: newY + 1 })) {
+    while (isValidMove(board, currentPiece, { ...position, y: newY + 1 }, currentShape)) {
       newY++;
     }
     setPosition({ ...position, y: newY });
     drop();
-  }, [board, currentPiece, position, drop]);
+  }, [board, currentPiece, currentShape, position, drop]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -175,8 +173,7 @@ const Board = ({ isPlaying, onGameOver, onScoreUpdate, setNextPiece }: BoardProp
   // Render the game board with the current piece
   const gameBoard = board.map((row, y) => [...row]);
   if (currentPiece) {
-    const piece = TETROMINOES[currentPiece];
-    piece.shape.forEach((row, pieceY) => {
+    currentShape.forEach((row, pieceY) => {
       row.forEach((cell, pieceX) => {
         if (cell && position.y + pieceY >= 0) {
           const boardY = position.y + pieceY;

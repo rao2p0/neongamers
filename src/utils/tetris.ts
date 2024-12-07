@@ -78,12 +78,15 @@ export const rotateMatrix = (matrix: number[][]): number[][] => {
   return ret;
 };
 
-export const isValidMove = (board: BoardType, piece: TetrominoType, position: Position): boolean => {
-  const tetromino = TETROMINOES[piece];
-  
-  for (let y = 0; y < tetromino.shape.length; y++) {
-    for (let x = 0; x < tetromino.shape[y].length; x++) {
-      if (tetromino.shape[y][x]) {
+export const isValidMove = (
+  board: BoardType,
+  piece: TetrominoType,
+  position: Position,
+  shape: number[][]
+): boolean => {
+  for (let y = 0; y < shape.length; y++) {
+    for (let x = 0; x < shape[y].length; x++) {
+      if (shape[y][x]) {
         const newX = position.x + x;
         const newY = position.y + y;
         
@@ -102,13 +105,17 @@ export const isValidMove = (board: BoardType, piece: TetrominoType, position: Po
   return true;
 };
 
-export const mergePieceToBoard = (board: BoardType, piece: TetrominoType, position: Position): BoardType => {
+export const mergePieceToBoard = (
+  board: BoardType,
+  piece: TetrominoType,
+  position: Position,
+  shape: number[][]
+): BoardType => {
   const newBoard = board.map(row => [...row]);
-  const tetromino = TETROMINOES[piece];
   
-  for (let y = 0; y < tetromino.shape.length; y++) {
-    for (let x = 0; x < tetromino.shape[y].length; x++) {
-      if (tetromino.shape[y][x]) {
+  for (let y = 0; y < shape.length; y++) {
+    for (let x = 0; x < shape[y].length; x++) {
+      if (shape[y][x]) {
         const newY = position.y + y;
         if (newY >= 0) {
           newBoard[newY][position.x + x] = piece;
