@@ -56,6 +56,11 @@ const Index = () => {
       path: "/paper-plane",
       image: "/lovable-uploads/9c1c55a3-3dcf-42f8-98d6-6705f90f72ed.png",
     },
+    {
+      title: "Rock Paper Scissors",
+      path: "/rock-paper-scissors",
+      image: "/lovable-uploads/fdc12c29-240c-4c9b-84e7-e77f1aea8fff.png",
+    },
   ];
 
   return (

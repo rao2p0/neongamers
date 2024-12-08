@@ -14,6 +14,7 @@ import Sudoku from "./pages/Sudoku";
 import Breakout from "./pages/Breakout";
 import Wordle from "./pages/Wordle";
 import PaperPlane from "./pages/PaperPlane";
+import RockPaperScissors from "./pages/RockPaperScissors";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/breakout" element={<Breakout />} />
           <Route path="/wordle" element={<Wordle />} />
           <Route path="/paper-plane" element={<PaperPlane />} />
+          <Route path="/rock-paper-scissors" element={<RockPaperScissors />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
