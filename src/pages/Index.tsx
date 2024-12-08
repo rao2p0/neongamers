@@ -1,65 +1,46 @@
 import { Button } from "@/components/ui/button";
-import Board from "@/components/Board";
-import NextPiece from "@/components/NextPiece";
-import { useState } from "react";
-import { TetrominoType, randomTetromino } from "@/utils/tetris";
-import { useToast } from "@/components/ui/use-toast";
+import { Card } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
-  const [score, setScore] = useState(0);
-  const [nextPiece, setNextPiece] = useState<TetrominoType>(randomTetromino());
-  const [isPlaying, setIsPlaying] = useState(false);
-  const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const handleGameOver = () => {
-    setIsPlaying(false);
-    toast({
-      title: "Game Over!",
-      description: `Final Score: ${score}`,
-      variant: "destructive",
-    });
-  };
-
-  const startGame = () => {
-    setIsPlaying(true);
-    setScore(0);
-  };
-
-  const updateScore = (points: number) => {
-    setScore(prev => prev + points);
-  };
+  const games = [
+    {
+      title: "Tetris",
+      description: "Classic block-stacking puzzle game",
+      path: "/tetris",
+      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&q=80&w=300&h=200",
+    },
+    // More games can be added here later
+  ];
 
   return (
-    <div className="min-h-screen bg-tetris-bg flex items-center justify-center">
-      <div className="flex flex-col items-center gap-8">
-        <h1 className="text-4xl font-bold text-white mb-4">Tetris</h1>
-        <div className="flex gap-8">
-          <Board 
-            isPlaying={isPlaying}
-            onGameOver={handleGameOver}
-            onScoreUpdate={updateScore}
-            setNextPiece={setNextPiece}
-          />
-          <div className="flex flex-col gap-4">
-            <NextPiece piece={nextPiece} />
-            <div className="bg-tetris-bg p-4 rounded-lg">
-              <h2 className="text-white mb-2">Score</h2>
-              <p className="text-2xl font-bold text-white">{score}</p>
-            </div>
-            <Button
-              onClick={() => (isPlaying ? setIsPlaying(false) : startGame())}
-              className="w-full"
-            >
-              {isPlaying ? "Pause" : "Start"}
-            </Button>
-          </div>
-        </div>
-        <div className="text-white text-sm">
-          Use arrow keys to play:<br/>
-          ← → to move<br/>
-          ↓ to drop faster<br/>
-          ↑ to hard drop<br/>
-          Space to rotate
+    <div className="min-h-screen bg-gray-900 text-white">
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-4xl font-bold text-center mb-8">Arcade Games</h1>
+        <p className="text-center text-gray-400 mb-12">Choose a game to play</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {games.map((game) => (
+            <Card key={game.title} className="bg-gray-800 border-gray-700">
+              <img
+                src={game.image}
+                alt={game.title}
+                className="w-full h-48 object-cover rounded-t-lg"
+              />
+              <div className="p-6">
+                <h2 className="text-2xl font-bold mb-2">{game.title}</h2>
+                <p className="text-gray-400 mb-4">{game.description}</p>
+                <Button 
+                  onClick={() => navigate(game.path)}
+                  className="w-full bg-purple-600 hover:bg-purple-700"
+                >
+                  Play Now
+                </Button>
+              </div>
+            </Card>
+          ))}
         </div>
       </div>
     </div>
