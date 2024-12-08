@@ -1,10 +1,14 @@
 import { useEffect } from "react";
 import Plane from "./Plane";
 import Obstacles from "./Obstacles";
-import { useGameState } from "./useGameState";
+import { GameState } from "./useGameState";
 
-const GameArea = () => {
-  const { planeY, rotation, obstacles, jump } = useGameState();
+interface GameAreaProps {
+  gameState: GameState;
+}
+
+const GameArea = ({ gameState }: GameAreaProps) => {
+  const { planeY, rotation, obstacles, jump } = gameState;
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {

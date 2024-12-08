@@ -15,7 +15,17 @@ interface Obstacle {
   height: number;
 }
 
-export const useGameState = () => {
+export interface GameState {
+  planeY: number;
+  rotation: number;
+  obstacles: Obstacle[];
+  score: number;
+  isPlaying: boolean;
+  jump: () => void;
+  startGame: () => void;
+}
+
+export const useGameState = (): GameState => {
   const [planeY, setPlaneY] = useState(GAME_HEIGHT / 2);
   const [planeVelocity, setPlaneVelocity] = useState(0);
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);

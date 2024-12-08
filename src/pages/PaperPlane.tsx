@@ -4,7 +4,7 @@ import GameArea from "@/components/paper-plane/GameArea";
 import { useGameState } from "@/components/paper-plane/useGameState";
 
 const PaperPlane = () => {
-  const { score, isPlaying, startGame } = useGameState();
+  const gameState = useGameState();
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -17,15 +17,15 @@ const PaperPlane = () => {
           <div className="w-20"></div>
         </div>
 
-        <GameArea />
+        <GameArea gameState={gameState} />
 
         <div className="flex flex-col items-center gap-4">
           <div className="bg-gray-800 p-4 rounded-lg">
-            <p className="text-white">Score: {score}</p>
+            <p className="text-white">Score: {gameState.score}</p>
           </div>
-          {!isPlaying && (
+          {!gameState.isPlaying && (
             <Button
-              onClick={startGame}
+              onClick={gameState.startGame}
               className="w-32 bg-purple-600 hover:bg-purple-700"
             >
               Start Game
