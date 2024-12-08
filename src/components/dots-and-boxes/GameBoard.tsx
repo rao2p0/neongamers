@@ -17,15 +17,15 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
                      hoveredLine?.col === col && 
                      hoveredLine?.isHorizontal === isHorizontal;
 
-    // Fix: Correctly calculate the line index based on position and orientation
-    const lineIndex = isHorizontal ? row * size + col : col * size + row;
+    // Calculate line index based on position and orientation
+    const lineIndex = isHorizontal ? row * size + col : row + col * size;
     const isDrawn = lines[isHorizontal ? 0 : 1][lineIndex];
 
     return cn(
       "absolute transform transition-colors duration-200",
       isHorizontal ? "h-1 w-12" : "w-1 h-12",
       isDrawn ? "bg-purple-500" : 
-      isHovered ? "bg-purple-400" : "bg-gray-600 hover:bg-purple-300",
+      isHovered ? "bg-purple-400" : "bg-gray-300 hover:bg-purple-300",
       currentPlayer === "computer" && "pointer-events-none"
     );
   };
@@ -67,7 +67,7 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
             onClick={() => onLineClick(row, col, false)}
             onMouseEnter={() => setHoveredLine({ row, col, isHorizontal: false })}
             onMouseLeave={() => setHoveredLine(null)}
-            disabled={lines[1][col * size + row] || currentPlayer === "computer"}
+            disabled={lines[1][row + col * size] || currentPlayer === "computer"}
           />
         ))
       )}

@@ -14,10 +14,11 @@ export const useDotsAndBoxes = (size: number) => {
   const [gameOver, setGameOver] = useState(false);
 
   const checkBox = useCallback((row: number, col: number): string | null => {
+    // Get the indices for the lines surrounding this box
     const top = lines[0][row * size + col];
     const bottom = lines[0][(row + 1) * size + col];
-    const left = lines[1][col * size + row];
-    const right = lines[1][(col + 1) * size + row];
+    const left = lines[1][row + col * size];
+    const right = lines[1][row + (col + 1) * size];
 
     if (top && bottom && left && right) {
       return currentPlayer;
@@ -32,47 +33,53 @@ export const useDotsAndBoxes = (size: number) => {
       for (let i = 0; i < maxIndex; i++) {
         if (!lines[isHorizontal][i]) {
           // Try this move
-          const newLines = lines.map(arr => arr.map(val => Boolean(val)));
+          const newLines = lines.map(arr => [...arr]);
           newLines[isHorizontal][i] = true;
+          
+          // Calculate row and col based on the line index
+          let row, col;
+          if (isHorizontal) {
+            row = Math.floor(i / size);
+            col = i % size;
+          } else {
+            row = i % size;
+            col = Math.floor(i / size);
+          }
           
           // Check if this move completes any boxes
           let completes = false;
           if (isHorizontal) {
-            const row = Math.floor(i / size);
-            const col = i % size;
             if (row > 0) {
-              const top = newLines[0][(row - 1) * size + col];
-              const left = newLines[1][col * size + (row - 1)];
-              const right = newLines[1][(col + 1) * size + (row - 1)];
+              const top = lines[0][(row - 1) * size + col];
+              const left = lines[1][row - 1 + col * size];
+              const right = lines[1][row - 1 + (col + 1) * size];
               if (top && left && right) completes = true;
             }
             if (row < size) {
-              const bottom = newLines[0][(row + 1) * size + col];
-              const left = newLines[1][col * size + row];
-              const right = newLines[1][(col + 1) * size + row];
+              const bottom = lines[0][(row + 1) * size + col];
+              const left = lines[1][row + col * size];
+              const right = lines[1][row + (col + 1) * size];
               if (bottom && left && right) completes = true;
             }
           } else {
-            const col = Math.floor(i / size);
-            const row = i % size;
             if (col > 0) {
-              const left = newLines[1][(col - 1) * size + row];
-              const top = newLines[0][row * size + (col - 1)];
-              const bottom = newLines[0][(row + 1) * size + (col - 1)];
+              const left = lines[1][row + (col - 1) * size];
+              const top = lines[0][row * size + col - 1];
+              const bottom = lines[0][(row + 1) * size + col - 1];
               if (left && top && bottom) completes = true;
             }
             if (col < size) {
-              const right = newLines[1][(col + 1) * size + row];
-              const top = newLines[0][row * size + col];
-              const bottom = newLines[0][(row + 1) * size + col];
+              const right = lines[1][row + (col + 1) * size];
+              const top = lines[0][row * size + col];
+              const bottom = lines[0][(row + 1) * size + col];
               if (right && top && bottom) completes = true;
             }
           }
           
           if (completes) {
             return {
-              row: isHorizontal ? Math.floor(i / size) : i % size,
-              col: isHorizontal ? i % size : Math.floor(i / size),
+              row,
+              col,
               isHorizontal: Boolean(isHorizontal)
             };
           }
@@ -86,9 +93,11 @@ export const useDotsAndBoxes = (size: number) => {
       const maxIndex = isHorizontal ? size * (size + 1) : (size + 1) * size;
       for (let i = 0; i < maxIndex; i++) {
         if (!lines[isHorizontal][i]) {
+          const row = isHorizontal ? Math.floor(i / size) : i % size;
+          const col = isHorizontal ? i % size : Math.floor(i / size);
           availableMoves.push({
-            row: isHorizontal ? Math.floor(i / size) : i % size,
-            col: isHorizontal ? i % size : Math.floor(i / size),
+            row,
+            col,
             isHorizontal: Boolean(isHorizontal)
           });
         }
@@ -103,7 +112,7 @@ export const useDotsAndBoxes = (size: number) => {
     if (gameOver) return;
 
     const newLines = lines.map(arr => [...arr]);
-    const lineIndex = isHorizontal ? row * size + col : col * size + row;
+    const lineIndex = isHorizontal ? row * size + col : row + col * size;
     newLines[isHorizontal ? 0 : 1][lineIndex] = true;
     setLines(newLines);
 
