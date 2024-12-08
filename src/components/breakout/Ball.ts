@@ -24,18 +24,20 @@ export const updateBall = (ball: BallState, canvas: HTMLCanvasElement, paddleX: 
     newBall.dy *= -1;
   }
 
-  // Paddle collision
+  // Update ball position first
+  newBall.x += newBall.dx;
+  newBall.y += newBall.dy;
+
+  // Paddle collision - check after updating position
   if (
     newBall.y + radius > paddleY &&
+    newBall.y - radius < paddleY + 20 && // paddle height
     newBall.x > paddleX &&
     newBall.x < paddleX + paddleWidth
   ) {
-    newBall.dy = -Math.abs(newBall.dy);
+    newBall.dy = -Math.abs(newBall.dy); // Always bounce up
+    newBall.y = paddleY - radius; // Prevent sticking
   }
-
-  // Update ball position
-  newBall.x += newBall.dx;
-  newBall.y += newBall.dy;
 
   return newBall;
 };
