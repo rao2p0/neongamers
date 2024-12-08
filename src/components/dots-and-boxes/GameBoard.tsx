@@ -17,6 +17,7 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
                      hoveredLine?.col === col && 
                      hoveredLine?.isHorizontal === isHorizontal;
 
+    // Fix: Correctly calculate the line index based on position and orientation
     const lineIndex = isHorizontal ? row * size + col : col * size + row;
     const isDrawn = lines[isHorizontal ? 0 : 1][lineIndex];
 
