@@ -1,0 +1,138 @@
+import { useState, useEffect, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+
+const words = [
+  "speed", "racing", "turbo", "nitro", "drift", "gear", "accelerate",
+  "brake", "engine", "track", "finish", "victory", "champion", "boost",
+  "velocity", "momentum", "throttle", "steering", "dashboard", "circuit"
+];
+
+const TypingRacer = () => {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [currentWord, setCurrentWord] = useState("");
+  const [userInput, setUserInput] = useState("");
+  const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [carPosition, setCarPosition] = useState(0);
+
+  const getRandomWord = useCallback(() => {
+    const randomIndex = Math.floor(Math.random() * words.length);
+    return words[randomIndex];
+  }, []);
+
+  const startGame = () => {
+    setIsPlaying(true);
+    setScore(0);
+    setTimeLeft(30);
+    setCarPosition(0);
+    setCurrentWord(getRandomWord());
+    setUserInput("");
+  };
+
+  useEffect(() => {
+    if (isPlaying && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+
+      return () => clearInterval(timer);
+    } else if (timeLeft === 0 && isPlaying) {
+      setIsPlaying(false);
+      toast({
+        title: "Game Over!",
+        description: `Your final score: ${score} words`,
+      });
+    }
+  }, [timeLeft, isPlaying, score, toast]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isPlaying) return;
+    
+    const value = e.target.value;
+    setUserInput(value);
+
+    if (value === currentWord) {
+      setScore((prev) => prev + 1);
+      setCurrentWord(getRandomWord());
+      setUserInput("");
+      setCarPosition((prev) => Math.min(prev + 20, 80)); // Move car forward
+      
+      toast({
+        title: "Correct!",
+        description: "+1 point",
+        duration: 1000,
+      });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-900 text-white p-8">
+      <Button
+        variant="outline"
+        size="icon"
+        className="absolute top-4 left-4"
+        onClick={() => navigate("/")}
+      >
+        <ArrowLeft className="h-4 w-4" />
+      </Button>
+
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-4xl font-bold text-center mb-8">Typing Racer</h1>
+
+        <div className="mb-8">
+          <div className="bg-gray-800 p-4 rounded-lg relative h-20 mb-4">
+            <div
+              className="absolute bottom-4 left-0 w-12 h-8 transition-all duration-300"
+              style={{ left: `${carPosition}%` }}
+            >
+              🏎️
+            </div>
+            <div className="absolute right-4 top-4">🏁</div>
+          </div>
+
+          <div className="flex justify-between text-sm mb-4">
+            <span>Score: {score}</span>
+            <span>Time: {timeLeft}s</span>
+          </div>
+        </div>
+
+        {!isPlaying ? (
+          <div className="text-center">
+            <Button
+              onClick={startGame}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-lg text-xl"
+            >
+              Start Game
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="text-center text-3xl font-bold mb-4 text-purple-400">
+              {currentWord}
+            </div>
+            <input
+              type="text"
+              value={userInput}
+              onChange={handleInputChange}
+              className="w-full bg-gray-800 text-white px-4 py-2 rounded-lg text-center text-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="Type the word here..."
+              autoFocus
+            />
+          </div>
+        )}
+
+        <div className="mt-8 text-center text-gray-400">
+          <p>Type the words as quickly as you can to move your car!</p>
+          <p>Race against time and reach the finish line.</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default TypingRacer;
