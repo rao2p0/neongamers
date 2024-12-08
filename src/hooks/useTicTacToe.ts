@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 
 type Player = "X" | "O";
@@ -67,42 +67,56 @@ export const useTicTacToe = () => {
   const [gameOver, setGameOver] = useState(false);
   const [isComputerTurn, setIsComputerTurn] = useState(false);
 
-  const computerMove = () => {
+  const computerMove = useCallback(() => {
     console.log("Computer's turn");
-    const newBoard = [...board];
-    const availableMoves = getAvailableMoves(newBoard);
     const computerSymbol = playerSymbol === "X" ? "O" : "X";
     
-    if (availableMoves.length > 0) {
-      let bestScore = -Infinity;
-      let bestMove = availableMoves[0];
+    setBoard(currentBoard => {
+      const newBoard = [...currentBoard];
+      const availableMoves = getAvailableMoves(newBoard);
+      
+      if (availableMoves.length > 0) {
+        let bestScore = -Infinity;
+        let bestMove = availableMoves[0];
 
-      for (const move of availableMoves) {
-        newBoard[move] = computerSymbol;
-        const score = minimax(newBoard, 0, false, playerSymbol);
-        newBoard[move] = null;
-        
-        if (score > bestScore) {
-          bestScore = score;
-          bestMove = move;
+        for (const move of availableMoves) {
+          newBoard[move] = computerSymbol;
+          const score = minimax(newBoard, 0, false, playerSymbol);
+          newBoard[move] = null;
+          
+          if (score > bestScore) {
+            bestScore = score;
+            bestMove = move;
+          }
         }
-      }
 
-      newBoard[bestMove] = computerSymbol;
-      console.log(`Computer placed ${computerSymbol} at position ${bestMove}`);
-      setBoard(newBoard);
-      setIsComputerTurn(false);
-
-      const winner = checkWinner(newBoard);
-      if (winner) {
-        setGameOver(true);
-        toast.success(`Computer wins!`);
-      } else if (!newBoard.includes(null)) {
-        setGameOver(true);
-        toast.info("It's a draw!");
+        newBoard[bestMove] = computerSymbol;
+        console.log(`Computer placed ${computerSymbol} at position ${bestMove}`);
+        return newBoard;
       }
+      return currentBoard;
+    });
+
+    setIsComputerTurn(false);
+  }, [playerSymbol]);
+
+  useEffect(() => {
+    if (isComputerTurn && !gameOver && gameStarted) {
+      const timer = setTimeout(computerMove, 500);
+      return () => clearTimeout(timer);
     }
-  };
+  }, [isComputerTurn, gameOver, gameStarted, computerMove]);
+
+  useEffect(() => {
+    const winner = checkWinner(board);
+    if (winner) {
+      setGameOver(true);
+      toast.success(winner === playerSymbol ? "You win!" : "Computer wins!");
+    } else if (!board.includes(null)) {
+      setGameOver(true);
+      toast.info("It's a draw!");
+    }
+  }, [board, playerSymbol]);
 
   const handlePlayerMove = (index: number) => {
     console.log(`Player attempting move at position ${index}`);
@@ -116,27 +130,14 @@ export const useTicTacToe = () => {
       return;
     }
 
-    const newBoard = [...board];
-    newBoard[index] = playerSymbol;
-    console.log(`Player placed ${playerSymbol} at position ${index}`);
-    setBoard(newBoard);
-
-    const winner = checkWinner(newBoard);
-    if (winner) {
-      setGameOver(true);
-      toast.success(`You win!`);
-      return;
-    }
-
-    if (!newBoard.includes(null)) {
-      setGameOver(true);
-      toast.info("It's a draw!");
-      return;
-    }
+    setBoard(currentBoard => {
+      const newBoard = [...currentBoard];
+      newBoard[index] = playerSymbol;
+      console.log(`Player placed ${playerSymbol} at position ${index}`);
+      return newBoard;
+    });
 
     setIsComputerTurn(true);
-    // Trigger computer's move after a short delay
-    setTimeout(computerMove, 500);
   };
 
   const startGame = () => {
