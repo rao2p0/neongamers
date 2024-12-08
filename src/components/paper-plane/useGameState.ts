@@ -9,6 +9,7 @@ const PLANE_SIZE = 30;
 const OBSTACLE_WIDTH = 60;
 const OBSTACLE_GAP = 200;
 const IMMUNITY_DURATION = 2000; // 2 seconds immunity at start
+const INITIAL_HOVER_DURATION = 1500; // 1.5 seconds of hovering at start
 
 interface Obstacle {
   x: number;
@@ -58,8 +59,14 @@ export const useGameState = (): GameState => {
     const deltaTime = timestamp - lastTimeRef.current;
     lastTimeRef.current = timestamp;
 
-    // Update plane position
+    const timeSinceStart = Date.now() - (gameStartTimeRef.current || 0);
+
+    // Update plane position - only apply gravity after initial hover period
     setPlaneY((prevY) => {
+      if (timeSinceStart < INITIAL_HOVER_DURATION) {
+        return GAME_HEIGHT / 2; // Keep plane steady during initial period
+      }
+      
       const newY = prevY + planeVelocity;
       if (newY > GAME_HEIGHT - PLANE_SIZE || newY < 0) {
         setIsPlaying(false);
@@ -69,13 +76,19 @@ export const useGameState = (): GameState => {
       return newY;
     });
 
-    setPlaneVelocity((prev) => prev + GRAVITY);
-    setRotation(planeVelocity * 2);
+    // Only apply gravity after initial hover period
+    if (timeSinceStart >= INITIAL_HOVER_DURATION) {
+      setPlaneVelocity((prev) => prev + GRAVITY);
+      setRotation(planeVelocity * 2);
+    } else {
+      setPlaneVelocity(0);
+      setRotation(0);
+    }
 
     // Update obstacles
     setObstacles((prevObstacles) => {
-      // Don't spawn obstacles during the first 2 seconds
-      if (prevObstacles.length === 0 && Date.now() - (gameStartTimeRef.current || 0) < IMMUNITY_DURATION) {
+      // Don't spawn obstacles during immunity period
+      if (prevObstacles.length === 0 && timeSinceStart < IMMUNITY_DURATION) {
         return [];
       }
 
@@ -88,10 +101,10 @@ export const useGameState = (): GameState => {
 
       // Only add new obstacle if there's none or the last one is far enough
       if (
-        (prevObstacles.length === 0 && Date.now() - (gameStartTimeRef.current || 0) >= IMMUNITY_DURATION) ||
+        (prevObstacles.length === 0 && timeSinceStart >= IMMUNITY_DURATION) ||
         (prevObstacles.length > 0 && prevObstacles[prevObstacles.length - 1].x < GAME_WIDTH - 300)
       ) {
-        const height = Math.random() * (GAME_HEIGHT - OBSTACLE_GAP - 100) + 50; // Ensure some minimum space at top
+        const height = Math.random() * (GAME_HEIGHT - OBSTACLE_GAP - 100) + 50;
         newObstacles.push({ x: GAME_WIDTH, height });
       }
 
@@ -99,7 +112,7 @@ export const useGameState = (): GameState => {
     });
 
     // Collision detection (only after immunity period)
-    if (Date.now() - (gameStartTimeRef.current || 0) >= IMMUNITY_DURATION) {
+    if (timeSinceStart >= IMMUNITY_DURATION) {
       obstacles.forEach((obstacle) => {
         if (!isPlaying) return;
 
