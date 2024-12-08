@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface GameBoardProps {
@@ -17,8 +17,6 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
                      hoveredLine?.col === col && 
                      hoveredLine?.isHorizontal === isHorizontal;
 
-    // For horizontal lines: index = row * (size) + col
-    // For vertical lines: index = row + col * size
     const lineIndex = isHorizontal ? 
       row * size + col : 
       row + col * size;
@@ -44,6 +42,18 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
     );
   };
 
+  const handleLineClick = (row: number, col: number, isHorizontal: boolean) => {
+    onLineClick(row, col, isHorizontal);
+  };
+
+  const handleMouseEnter = (row: number, col: number, isHorizontal: boolean) => {
+    setHoveredLine({ row, col, isHorizontal });
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredLine(null);
+  };
+
   return (
     <div className="relative" style={{ width: size * 48 + 12, height: size * 48 + 12 }}>
       {/* Horizontal lines */}
@@ -53,9 +63,9 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
             key={`h-${row}-${col}`}
             className={getLineClass(row, col, true)}
             style={{ top: row * 48, left: col * 48 + 12 }}
-            onClick={() => onLineClick(row, col, true)}
-            onMouseEnter={() => setHoveredLine({ row, col, isHorizontal: true })}
-            onMouseLeave={() => setHoveredLine(null)}
+            onClick={() => handleLineClick(row, col, true)}
+            onMouseEnter={() => handleMouseEnter(row, col, true)}
+            onMouseLeave={handleMouseLeave}
           />
         ))
       )}
@@ -67,9 +77,9 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
             key={`v-${row}-${col}`}
             className={getLineClass(row, col, false)}
             style={{ top: row * 48 + 12, left: col * 48 }}
-            onClick={() => onLineClick(row, col, false)}
-            onMouseEnter={() => setHoveredLine({ row, col, isHorizontal: false })}
-            onMouseLeave={() => setHoveredLine(null)}
+            onClick={() => handleLineClick(row, col, false)}
+            onMouseEnter={() => handleMouseEnter(row, col, false)}
+            onMouseLeave={handleMouseLeave}
           />
         ))
       )}
