@@ -6,8 +6,11 @@ import { Link } from "react-router-dom";
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 type Position = { x: number; y: number };
 
+const GRID_WIDTH = 32;  // Changed from 20
+const GRID_HEIGHT = 18; // Changed from 20 to maintain 16:9 ratio
+
 const Snake = () => {
-  const [snake, setSnake] = useState<Position[]>([{ x: 10, y: 10 }]);
+  const [snake, setSnake] = useState<Position[]>([{ x: Math.floor(GRID_WIDTH/2), y: Math.floor(GRID_HEIGHT/2) }]);
   const [food, setFood] = useState<Position>({ x: 5, y: 5 });
   const [direction, setDirection] = useState<Direction>("RIGHT");
   const [isPlaying, setIsPlaying] = useState(false);
@@ -16,15 +19,15 @@ const Snake = () => {
 
   const generateFood = useCallback(() => {
     const newFood = {
-      x: Math.floor(Math.random() * 20),
-      y: Math.floor(Math.random() * 20),
+      x: Math.floor(Math.random() * GRID_WIDTH),
+      y: Math.floor(Math.random() * GRID_HEIGHT),
     };
     setFood(newFood);
   }, []);
 
   const checkCollision = useCallback((head: Position) => {
     // Check wall collision
-    if (head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20) return true;
+    if (head.x < 0 || head.x >= GRID_WIDTH || head.y < 0 || head.y >= GRID_HEIGHT) return true;
     
     // Check self collision
     for (let i = 1; i < snake.length; i++) {
@@ -114,7 +117,7 @@ const Snake = () => {
   }, [isPlaying, moveSnake]);
 
   const startGame = () => {
-    setSnake([{ x: 10, y: 10 }]);
+    setSnake([{ x: Math.floor(GRID_WIDTH/2), y: Math.floor(GRID_HEIGHT/2) }]);
     setDirection("RIGHT");
     setScore(0);
     generateFood();
@@ -133,17 +136,17 @@ const Snake = () => {
         </div>
 
         <div className="relative bg-gray-800 p-4 rounded-lg">
-          <div className="grid grid-cols-20 gap-0">
-            {Array.from({ length: 400 }).map((_, index) => {
-              const x = Math.floor(index % 20);
-              const y = Math.floor(index / 20);
+          <div className="grid grid-cols-32 gap-0" style={{ aspectRatio: '16/9' }}>
+            {Array.from({ length: GRID_WIDTH * GRID_HEIGHT }).map((_, index) => {
+              const x = Math.floor(index % GRID_WIDTH);
+              const y = Math.floor(index / GRID_WIDTH);
               const isSnake = snake.some(segment => segment.x === x && segment.y === y);
               const isFood = food.x === x && food.y === y;
 
               return (
                 <div
                   key={index}
-                  className={`w-4 h-4 border border-gray-700 ${
+                  className={`w-3 h-3 border border-gray-700 ${
                     isSnake ? "bg-green-500" : isFood ? "bg-red-500" : "bg-gray-900"
                   }`}
                 />

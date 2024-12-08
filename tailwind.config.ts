@@ -13,6 +13,9 @@ export default {
       },
     },
     extend: {
+      gridTemplateColumns: {
+        '32': 'repeat(32, minmax(0, 1fr))',
+      },
       colors: {
         tetris: {
           bg: "#1A1F2C",
