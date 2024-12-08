@@ -10,13 +10,13 @@ const Index = () => {
       title: "Tetris",
       description: "Classic block-stacking puzzle game",
       path: "/tetris",
-      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&q=80&w=300&h=200",
+      image: "/lovable-uploads/970e8a81-557c-4f50-a698-f552796794c7.png",
     },
     {
       title: "Snake",
       description: "Classic snake game - eat food to grow longer",
       path: "/snake",
-      image: "https://images.unsplash.com/photo-1582562124811-c09040d0a901?auto=format&fit=crop&q=80&w=300&h=200",
+      image: "/lovable-uploads/37d7986f-390e-46cf-a105-1466ac930198.png",
     },
   ];
 
