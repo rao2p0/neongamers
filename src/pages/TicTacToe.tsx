@@ -188,9 +188,10 @@ const TicTacToe = () => {
                 <button
                   key={index}
                   onClick={() => handleClick(index)}
-                  className={`w-20 h-20 flex items-center justify-center text-4xl font-bold ${
-                    square ? 'bg-gray-700' : 'bg-gray-600 hover:bg-gray-500'
-                  } text-white rounded transition-colors`}
+                  className={`w-20 h-20 flex items-center justify-center text-4xl font-bold 
+                    ${square ? 'bg-gray-700' : 'bg-gray-600 hover:bg-gray-500'} 
+                    ${square === playerSymbol ? 'text-purple-400' : 'text-white'}
+                    rounded transition-colors`}
                   disabled={!!square || gameOver}
                 >
                   {square}
