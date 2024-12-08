@@ -1,165 +1,143 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { Block, drawBlocks, initializeBlocks, checkBlockCollisions } from "@/components/breakout/Block";
+import { BallState, drawBall, updateBall } from "@/components/breakout/Ball";
+import { PaddleState, drawPaddle, updatePaddlePosition } from "@/components/breakout/Paddle";
 
-interface Block {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  color: string;
-  visible: boolean;
-}
+const GAME_CONFIG = {
+  paddleWidth: 100,
+  paddleHeight: 20,
+  ballRadius: 8,
+  blockRows: 5,
+  blockColumns: 8,
+  blockPadding: 10,
+  blockWidth: 80,
+  blockHeight: 20,
+  paddleSpeed: 8,
+  initialBallSpeed: 6
+};
 
 const Breakout = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const requestRef = useRef<number>();
   const [gameStarted, setGameStarted] = useState(false);
   
-  // Game state
-  const paddleWidth = 100;
-  const paddleHeight = 20;
-  const ballRadius = 8;
-  const blockRows = 5;
-  const blockColumns = 8;
-  const blockPadding = 10;
-  const blockWidth = 80;
-  const blockHeight = 20;
-  
-  // Game objects
-  const [paddle, setPaddle] = useState({ x: 350, y: 550 });
-  const [ball, setBall] = useState({ x: 400, y: 530, dx: 4, dy: -4 });
+  const [paddle, setPaddle] = useState<PaddleState>({ x: 350, y: 550 });
+  const [ball, setBall] = useState<BallState>({ 
+    x: 400, 
+    y: 530, 
+    dx: GAME_CONFIG.initialBallSpeed, 
+    dy: -GAME_CONFIG.initialBallSpeed 
+  });
   const [blocks, setBlocks] = useState<Block[]>([]);
-  
-  // Initialize blocks
-  const initializeBlocks = () => {
-    const newBlocks: Block[] = [];
-    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD'];
-    
-    for (let row = 0; row < blockRows; row++) {
-      for (let col = 0; col < blockColumns; col++) {
-        newBlocks.push({
-          x: col * (blockWidth + blockPadding) + 100,
-          y: row * (blockHeight + blockPadding) + 50,
-          width: blockWidth,
-          height: blockHeight,
-          color: colors[row],
-          visible: true
-        });
-      }
-    }
-    setBlocks(newBlocks);
-  };
+  const [keys, setKeys] = useState({ left: false, right: false });
 
-  // Start new game
-  const startNewGame = () => {
+  const startNewGame = useCallback(() => {
     setPaddle({ x: 350, y: 550 });
-    setBall({ x: 400, y: 530, dx: 4, dy: -4 });
-    initializeBlocks();
+    setBall({ 
+      x: 400, 
+      y: 530, 
+      dx: GAME_CONFIG.initialBallSpeed, 
+      dy: -GAME_CONFIG.initialBallSpeed 
+    });
+    setBlocks(initializeBlocks(
+      GAME_CONFIG.blockRows,
+      GAME_CONFIG.blockColumns,
+      GAME_CONFIG.blockWidth,
+      GAME_CONFIG.blockHeight,
+      GAME_CONFIG.blockPadding
+    ));
     setGameStarted(true);
-  };
+  }, []);
 
-  // Handle paddle movement
+  const gameLoop = useCallback(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx || !gameStarted) return;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Update paddle position based on key state
+    if (keys.left) {
+      setPaddle(prev => ({ 
+        ...prev, 
+        x: updatePaddlePosition(prev.x, -GAME_CONFIG.paddleSpeed, canvas.width, GAME_CONFIG.paddleWidth)
+      }));
+    }
+    if (keys.right) {
+      setPaddle(prev => ({ 
+        ...prev, 
+        x: updatePaddlePosition(prev.x, GAME_CONFIG.paddleSpeed, canvas.width, GAME_CONFIG.paddleWidth)
+      }));
+    }
+
+    // Update ball position and check collisions
+    setBall(prevBall => {
+      const newBall = updateBall(
+        prevBall,
+        canvas,
+        paddle.x,
+        GAME_CONFIG.paddleWidth,
+        paddle.y,
+        GAME_CONFIG.ballRadius
+      );
+
+      const { blocks: updatedBlocks, collision } = checkBlockCollisions(newBall, blocks);
+      if (collision) {
+        setBlocks(updatedBlocks);
+        newBall.dy *= -1;
+      }
+
+      // Game over condition
+      if (newBall.y + GAME_CONFIG.ballRadius > canvas.height) {
+        setGameStarted(false);
+        return prevBall;
+      }
+
+      return newBall;
+    });
+
+    // Draw game objects
+    drawPaddle(ctx, paddle, GAME_CONFIG.paddleWidth, GAME_CONFIG.paddleHeight);
+    drawBall(ctx, ball, GAME_CONFIG.ballRadius);
+    drawBlocks(ctx, blocks);
+
+    // Request next frame
+    requestRef.current = requestAnimationFrame(gameLoop);
+  }, [gameStarted, paddle, ball, blocks, keys]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!gameStarted) return;
-      
-      if (e.key === 'ArrowLeft' && paddle.x > 0) {
-        setPaddle(prev => ({ ...prev, x: Math.max(0, prev.x - 20) }));
-      }
-      if (e.key === 'ArrowRight' && paddle.x < 800 - paddleWidth) {
-        setPaddle(prev => ({ ...prev, x: Math.min(800 - paddleWidth, prev.x + 20) }));
-      }
+      if (e.key === 'ArrowLeft') setKeys(prev => ({ ...prev, left: true }));
+      if (e.key === 'ArrowRight') setKeys(prev => ({ ...prev, right: true }));
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') setKeys(prev => ({ ...prev, left: false }));
+      if (e.key === 'ArrowRight') setKeys(prev => ({ ...prev, right: false }));
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [gameStarted, paddle.x]);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [gameStarted]);
 
-  // Game loop
   useEffect(() => {
-    if (!gameStarted) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return;
-
-    const gameLoop = setInterval(() => {
-      // Clear canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw paddle
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(paddle.x, paddle.y, paddleWidth, paddleHeight);
-
-      // Draw ball
-      ctx.beginPath();
-      ctx.arc(ball.x, ball.y, ballRadius, 0, Math.PI * 2);
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fill();
-      ctx.closePath();
-
-      // Draw blocks
-      blocks.forEach(block => {
-        if (block.visible) {
-          ctx.fillStyle = block.color;
-          ctx.fillRect(block.x, block.y, block.width, block.height);
-        }
-      });
-
-      // Ball movement and collision detection
-      setBall(prevBall => {
-        let newBall = { ...prevBall };
-        
-        // Wall collisions
-        if (newBall.x + ballRadius > canvas.width || newBall.x - ballRadius < 0) {
-          newBall.dx *= -1;
-        }
-        if (newBall.y - ballRadius < 0) {
-          newBall.dy *= -1;
-        }
-        
-        // Paddle collision
-        if (
-          newBall.y + ballRadius > paddle.y &&
-          newBall.x > paddle.x &&
-          newBall.x < paddle.x + paddleWidth
-        ) {
-          newBall.dy = -Math.abs(newBall.dy);
-        }
-
-        // Block collisions
-        blocks.forEach((block, index) => {
-          if (block.visible &&
-              newBall.x > block.x &&
-              newBall.x < block.x + block.width &&
-              newBall.y > block.y &&
-              newBall.y < block.y + block.height
-          ) {
-            setBlocks(prevBlocks => {
-              const newBlocks = [...prevBlocks];
-              newBlocks[index].visible = false;
-              return newBlocks;
-            });
-            newBall.dy *= -1;
-          }
-        });
-
-        // Game over condition
-        if (newBall.y + ballRadius > canvas.height) {
-          setGameStarted(false);
-          return prevBall;
-        }
-
-        // Update ball position
-        newBall.x += newBall.dx;
-        newBall.y += newBall.dy;
-        
-        return newBall;
-      });
-    }, 1000 / 60); // 60 FPS
-
-    return () => clearInterval(gameLoop);
-  }, [gameStarted, paddle.x, paddle.y, blocks]);
+    if (gameStarted) {
+      requestRef.current = requestAnimationFrame(gameLoop);
+    }
+    return () => {
+      if (requestRef.current) {
+        cancelAnimationFrame(requestRef.current);
+      }
+    };
+  }, [gameStarted, gameLoop]);
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center">
