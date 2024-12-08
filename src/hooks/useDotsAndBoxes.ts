@@ -15,9 +15,9 @@ export const useDotsAndBoxes = (size: number) => {
 
   const checkBox = useCallback((row: number, col: number): string | null => {
     // Get the indices for the lines surrounding this box
-    const top = row > 0 ? lines[0][row * size + col] : false;
+    const top = lines[0][row * size + col];
     const bottom = lines[0][(row + 1) * size + col];
-    const left = col > 0 ? lines[1][row + col * size] : false;
+    const left = lines[1][row + col * size];
     const right = lines[1][row + (col + 1) * size];
 
     if (top && bottom && left && right) {
