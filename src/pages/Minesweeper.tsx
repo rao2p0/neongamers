@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 type Cell = {
   isMine: boolean;
@@ -11,7 +11,6 @@ type Cell = {
 };
 
 const Minesweeper = () => {
-  const navigate = useNavigate();
   const [board, setBoard] = useState<Cell[][]>([]);
   const [gameOver, setGameOver] = useState(false);
   const [gameWon, setGameWon] = useState(false);
@@ -138,41 +137,52 @@ const Minesweeper = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-4">
-      <div className="bg-white rounded-lg p-6 shadow-xl">
-        <div className="mb-4 flex justify-between items-center">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate('/')}
-            className="mr-2"
-          >
-            Back to Homepage
-          </Button>
-          <h1 className="text-2xl font-bold">Minesweeper</h1>
-          <Button onClick={initializeBoard}>New Game</Button>
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="flex flex-col items-center gap-8">
+        <div className="flex items-center justify-between w-full">
+          <Link to="/" className="text-white hover:text-gray-300">
+            ← Back to Games
+          </Link>
+          <h1 className="text-4xl font-bold text-white">Minesweeper</h1>
+          <div className="w-20"></div>
         </div>
-        
-        <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
-          {board.map((row, i) =>
-            row.map((cell, j) => (
-              <button
-                key={`${i}-${j}`}
-                className={`w-8 h-8 flex items-center justify-center font-bold ${getCellColor(cell)} hover:brightness-95 transition-all`}
-                onClick={() => revealCell(i, j)}
-                onContextMenu={(e) => {
-                  e.preventDefault();
-                  toggleFlag(i, j);
-                }}
-                disabled={gameOver || gameWon}
-              >
-                {getCellContent(cell)}
-              </button>
-            ))
-          )}
+
+        <div className="bg-gray-800 p-8 rounded-lg shadow-xl">
+          <div className="flex justify-between items-center mb-6">
+            <div className="bg-gray-700 px-4 py-2 rounded">
+              <p className="text-white">Mines: {mines}</p>
+            </div>
+            <Button 
+              onClick={initializeBoard}
+              className="bg-purple-600 hover:bg-purple-700"
+            >
+              New Game
+            </Button>
+          </div>
+          
+          <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
+            {board.map((row, i) =>
+              row.map((cell, j) => (
+                <button
+                  key={`${i}-${j}`}
+                  className={`w-8 h-8 flex items-center justify-center font-bold ${getCellColor(cell)} hover:brightness-95 transition-all`}
+                  onClick={() => revealCell(i, j)}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    toggleFlag(i, j);
+                  }}
+                  disabled={gameOver || gameWon}
+                >
+                  {getCellContent(cell)}
+                </button>
+              ))
+            )}
+          </div>
         </div>
-        
-        <div className="mt-4 text-center text-sm text-gray-600">
-          Right-click to flag mines
+
+        <div className="text-white text-sm text-center">
+          Right-click to flag mines<br/>
+          Clear all cells without mines to win!
         </div>
       </div>
     </div>
