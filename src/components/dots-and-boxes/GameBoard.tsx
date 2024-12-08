@@ -28,8 +28,8 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
       "absolute transform transition-colors duration-200",
       isHorizontal ? "h-1 w-12" : "w-1 h-12",
       isDrawn ? "bg-purple-500" : 
-      isHovered ? "bg-purple-400" : "bg-gray-300",
-      currentPlayer === "computer" ? "pointer-events-none" : ""
+      isHovered ? "bg-purple-400" : "bg-gray-300 hover:bg-purple-300",
+      currentPlayer === "computer" ? "pointer-events-none" : "cursor-pointer"
     );
   };
 
@@ -76,6 +76,16 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
     setSelectedDot(null);
   };
 
+  const handleLineClick = (row: number, col: number, isHorizontal: boolean) => {
+    if (currentPlayer === "computer") return;
+    
+    // Check if the line is already drawn
+    const lineIndex = isHorizontal ? row * size + col : row + col * size;
+    if (lines[isHorizontal ? 0 : 1][lineIndex]) return;
+    
+    onLineClick(row, col, isHorizontal);
+  };
+
   const handleLineMouseEnter = (row: number, col: number, isHorizontal: boolean) => {
     setHoveredLine({ row, col, isHorizontal });
   };
@@ -89,10 +99,11 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
       {/* Horizontal lines */}
       {Array.from({ length: size + 1 }, (_, row) =>
         Array.from({ length: size }, (_, col) => (
-          <div
+          <button
             key={`h-${row}-${col}`}
             className={getLineClass(row, col, true)}
             style={{ top: row * 48, left: col * 48 + 12 }}
+            onClick={() => handleLineClick(row, col, true)}
             onMouseEnter={() => handleLineMouseEnter(row, col, true)}
             onMouseLeave={handleLineMouseLeave}
           />
@@ -102,10 +113,11 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
       {/* Vertical lines */}
       {Array.from({ length: size }, (_, row) =>
         Array.from({ length: size + 1 }, (_, col) => (
-          <div
+          <button
             key={`v-${row}-${col}`}
             className={getLineClass(row, col, false)}
             style={{ top: row * 48 + 12, left: col * 48 }}
+            onClick={() => handleLineClick(row, col, false)}
             onMouseEnter={() => handleLineMouseEnter(row, col, false)}
             onMouseLeave={handleLineMouseLeave}
           />
