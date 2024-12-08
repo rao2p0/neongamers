@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 type Cell = {
   isMine: boolean;
@@ -10,6 +11,7 @@ type Cell = {
 };
 
 const Minesweeper = () => {
+  const navigate = useNavigate();
   const [board, setBoard] = useState<Cell[][]>([]);
   const [gameOver, setGameOver] = useState(false);
   const [gameWon, setGameWon] = useState(false);
@@ -139,6 +141,13 @@ const Minesweeper = () => {
     <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-4">
       <div className="bg-white rounded-lg p-6 shadow-xl">
         <div className="mb-4 flex justify-between items-center">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/')}
+            className="mr-2"
+          >
+            Back to Homepage
+          </Button>
           <h1 className="text-2xl font-bold">Minesweeper</h1>
           <Button onClick={initializeBoard}>New Game</Button>
         </div>
