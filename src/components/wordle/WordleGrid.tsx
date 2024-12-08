@@ -9,12 +9,38 @@ const WordleGrid = ({ currentGuess, guesses, targetWord, maxAttempts }: WordleGr
   const getBackgroundColor = (letter: string, index: number, isCompleted: boolean) => {
     if (!isCompleted) return "bg-gray-700";
     
-    if (targetWord[index] === letter) {
+    const upperLetter = letter.toUpperCase();
+    const upperTarget = targetWord.toUpperCase();
+    
+    if (upperTarget[index] === upperLetter) {
       return "bg-green-600";
     }
-    if (targetWord.includes(letter)) {
+    
+    // Count remaining occurrences of the letter
+    const letterCount = upperTarget.split('').reduce((count, l) => {
+      return l === upperLetter ? count + 1 : count;
+    }, 0);
+    
+    // Count correct positions before this index
+    const correctBefore = guesses[guesses.length - 1]
+      .slice(0, index)
+      .split('')
+      .reduce((count, l, i) => {
+        return l === upperLetter && upperTarget[i] === l ? count + 1 : count;
+      }, 0);
+    
+    // Count yellow positions before this index
+    const yellowBefore = guesses[guesses.length - 1]
+      .slice(0, index)
+      .split('')
+      .reduce((count, l, i) => {
+        return l === upperLetter && upperTarget[i] !== l && upperTarget.includes(l) ? count + 1 : count;
+      }, 0);
+    
+    if (upperTarget.includes(upperLetter) && (correctBefore + yellowBefore) < letterCount) {
       return "bg-yellow-500";
     }
+    
     return "bg-gray-600";
   };
 
@@ -32,7 +58,7 @@ const WordleGrid = ({ currentGuess, guesses, targetWord, maxAttempts }: WordleGr
             ${letter ? 'scale-100' : 'scale-95'}
             transition-all duration-200`}
         >
-          {letter}
+          {letter.toUpperCase()}
         </div>
       );
     }

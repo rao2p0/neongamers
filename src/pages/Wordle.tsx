@@ -15,10 +15,13 @@ const Wordle = () => {
   const [gameOver, setGameOver] = useState(false);
   const [gameWon, setGameWon] = useState(false);
 
-  // Word list for the game
+  // Extended word list for more variety
   const wordList = [
     "REACT", "VITES", "GAMES", "CODES", "BUILD",
-    "WORLD", "PIXEL", "SCORE", "LEVEL", "POWER"
+    "WORLD", "PIXEL", "SCORE", "LEVEL", "POWER",
+    "BRAIN", "SMART", "QUICK", "LOGIC", "THINK",
+    "GUESS", "SOLVE", "LEARN", "WRITE", "CLICK",
+    "MOUSE", "BOARD", "SPACE", "LIGHT", "SOUND"
   ];
 
   useEffect(() => {
@@ -43,16 +46,17 @@ const Wordle = () => {
         return;
       }
 
-      if (!wordList.includes(currentGuess)) {
+      const guessUpperCase = currentGuess.toUpperCase();
+      if (!wordList.includes(guessUpperCase)) {
         toast.error("Not in word list!");
         return;
       }
 
-      const newGuesses = [...guesses, currentGuess];
+      const newGuesses = [...guesses, guessUpperCase];
       setGuesses(newGuesses);
       setCurrentGuess("");
 
-      if (currentGuess === targetWord) {
+      if (guessUpperCase === targetWord) {
         setGameWon(true);
         toast.success("Congratulations! You won!");
         return;
@@ -77,15 +81,36 @@ const Wordle = () => {
       states[letter] = 'unused';
     });
 
+    // Count letter frequencies in target word
+    const targetLetterCount: { [key: string]: number } = {};
+    targetWord.split('').forEach(letter => {
+      targetLetterCount[letter] = (targetLetterCount[letter] || 0) + 1;
+    });
+
     // Update states based on guesses
     guesses.forEach(guess => {
-      guess.split('').forEach((letter, i) => {
+      const remainingLetters = { ...targetLetterCount };
+      const guessArray = guess.split('');
+      
+      // First pass: mark correct letters
+      guessArray.forEach((letter, i) => {
         if (targetWord[i] === letter) {
           states[letter] = 'correct';
-        } else if (targetWord.includes(letter) && states[letter] !== 'correct') {
-          states[letter] = 'present';
-        } else if (!targetWord.includes(letter)) {
-          states[letter] = 'absent';
+          remainingLetters[letter]--;
+        }
+      });
+
+      // Second pass: mark present/absent letters
+      guessArray.forEach((letter, i) => {
+        if (targetWord[i] !== letter) {
+          if (remainingLetters[letter] > 0) {
+            states[letter] = 'present';
+            remainingLetters[letter]--;
+          } else {
+            if (states[letter] !== 'correct') {
+              states[letter] = 'absent';
+            }
+          }
         }
       });
     });
