@@ -51,6 +51,11 @@ const Index = () => {
       path: "/wordle",
       image: "/lovable-uploads/ad1db81d-01be-48f7-b121-f94e508c0dbd.png",
     },
+    {
+      title: "Paper Plane",
+      path: "/paper-plane",
+      image: "/lovable-uploads/9c1c55a3-3dcf-42f8-98d6-6705f90f72ed.png",
+    },
   ];
 
   return (
