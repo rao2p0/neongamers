@@ -65,8 +65,10 @@ export const useTicTacToe = () => {
   const [playerSymbol, setPlayerSymbol] = useState<Player>("X");
   const [gameStarted, setGameStarted] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [isComputerTurn, setIsComputerTurn] = useState(false);
 
   const computerMove = () => {
+    console.log("Computer's turn");
     const newBoard = [...board];
     const availableMoves = getAvailableMoves(newBoard);
     const computerSymbol = playerSymbol === "X" ? "O" : "X";
@@ -87,7 +89,9 @@ export const useTicTacToe = () => {
       }
 
       newBoard[bestMove] = computerSymbol;
+      console.log(`Computer placed ${computerSymbol} at position ${bestMove}`);
       setBoard(newBoard);
+      setIsComputerTurn(false);
 
       const winner = checkWinner(newBoard);
       if (winner) {
@@ -101,10 +105,20 @@ export const useTicTacToe = () => {
   };
 
   const handlePlayerMove = (index: number) => {
-    if (board[index] || gameOver || !gameStarted) return;
+    console.log(`Player attempting move at position ${index}`);
+    if (board[index] || gameOver || !gameStarted || isComputerTurn) {
+      console.log("Move rejected:", {
+        alreadyOccupied: !!board[index],
+        gameOver,
+        notStarted: !gameStarted,
+        computerTurn: isComputerTurn
+      });
+      return;
+    }
 
     const newBoard = [...board];
     newBoard[index] = playerSymbol;
+    console.log(`Player placed ${playerSymbol} at position ${index}`);
     setBoard(newBoard);
 
     const winner = checkWinner(newBoard);
@@ -120,6 +134,7 @@ export const useTicTacToe = () => {
       return;
     }
 
+    setIsComputerTurn(true);
     // Trigger computer's move after a short delay
     setTimeout(computerMove, 500);
   };
@@ -128,12 +143,16 @@ export const useTicTacToe = () => {
     setBoard(Array(9).fill(null));
     setGameOver(false);
     setGameStarted(true);
+    setIsComputerTurn(false);
+    console.log("Game started with player symbol:", playerSymbol);
   };
 
   const resetGame = () => {
     setBoard(Array(9).fill(null));
     setGameOver(false);
     setGameStarted(false);
+    setIsComputerTurn(false);
+    console.log("Game reset");
   };
 
   return {
