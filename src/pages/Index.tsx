@@ -19,7 +19,7 @@ const Index = () => {
     {
       title: "Flappy Bird",
       path: "/flappy-bird",
-      image: "/lovable-uploads/970e8a81-557c-4f50-a698-f552796794c7.png", // Using Tetris image temporarily
+      image: "/lovable-uploads/56a4bcea-80aa-4d31-b881-64891710670f.png",
     },
   ];
 
