@@ -10,6 +10,7 @@ interface GameBoardProps {
 }
 
 const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoardProps) => {
+  const [selectedDot, setSelectedDot] = useState<{ row: number; col: number } | null>(null);
   const [hoveredLine, setHoveredLine] = useState<{ row: number; col: number; isHorizontal: boolean } | null>(null);
 
   const getLineClass = (row: number, col: number, isHorizontal: boolean) => {
@@ -27,12 +28,19 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
       "absolute transform transition-colors duration-200",
       isHorizontal ? "h-1 w-12" : "w-1 h-12",
       isDrawn ? "bg-purple-500" : 
-      isHovered ? "bg-purple-400" : "bg-gray-300 hover:bg-purple-300",
-      currentPlayer === "computer" ? "pointer-events-none" : "cursor-pointer"
+      isHovered ? "bg-purple-400" : "bg-gray-300",
+      currentPlayer === "computer" ? "pointer-events-none" : ""
     );
   };
 
-  const getDotClass = "absolute w-3 h-3 bg-gray-400 rounded-full transform -translate-x-1.5 -translate-y-1.5";
+  const getDotClass = (row: number, col: number) => cn(
+    "absolute w-3 h-3 rounded-full transform -translate-x-1.5 -translate-y-1.5 transition-colors duration-200",
+    selectedDot?.row === row && selectedDot?.col === col 
+      ? "bg-purple-500" 
+      : currentPlayer === "computer"
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-gray-400 hover:bg-purple-400 cursor-pointer"
+  );
 
   const getBoxClass = (row: number, col: number) => {
     const owner = boxes[row][col];
@@ -42,15 +50,37 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
     );
   };
 
-  const handleLineClick = (row: number, col: number, isHorizontal: boolean) => {
-    onLineClick(row, col, isHorizontal);
+  const handleDotClick = (row: number, col: number) => {
+    if (currentPlayer === "computer") return;
+    
+    if (!selectedDot) {
+      setSelectedDot({ row, col });
+      return;
+    }
+
+    // Check if dots are adjacent
+    const rowDiff = Math.abs(selectedDot.row - row);
+    const colDiff = Math.abs(selectedDot.col - col);
+    
+    if ((rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1)) {
+      // Determine if it's a horizontal or vertical line
+      const isHorizontal = rowDiff === 0;
+      
+      // Calculate the correct row and col for the line
+      const lineRow = isHorizontal ? row : Math.min(selectedDot.row, row);
+      const lineCol = isHorizontal ? Math.min(selectedDot.col, col) : col;
+      
+      onLineClick(lineRow, lineCol, isHorizontal);
+    }
+    
+    setSelectedDot(null);
   };
 
-  const handleMouseEnter = (row: number, col: number, isHorizontal: boolean) => {
+  const handleLineMouseEnter = (row: number, col: number, isHorizontal: boolean) => {
     setHoveredLine({ row, col, isHorizontal });
   };
 
-  const handleMouseLeave = () => {
+  const handleLineMouseLeave = () => {
     setHoveredLine(null);
   };
 
@@ -59,13 +89,12 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
       {/* Horizontal lines */}
       {Array.from({ length: size + 1 }, (_, row) =>
         Array.from({ length: size }, (_, col) => (
-          <button
+          <div
             key={`h-${row}-${col}`}
             className={getLineClass(row, col, true)}
             style={{ top: row * 48, left: col * 48 + 12 }}
-            onClick={() => handleLineClick(row, col, true)}
-            onMouseEnter={() => handleMouseEnter(row, col, true)}
-            onMouseLeave={handleMouseLeave}
+            onMouseEnter={() => handleLineMouseEnter(row, col, true)}
+            onMouseLeave={handleLineMouseLeave}
           />
         ))
       )}
@@ -73,13 +102,12 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
       {/* Vertical lines */}
       {Array.from({ length: size }, (_, row) =>
         Array.from({ length: size + 1 }, (_, col) => (
-          <button
+          <div
             key={`v-${row}-${col}`}
             className={getLineClass(row, col, false)}
             style={{ top: row * 48 + 12, left: col * 48 }}
-            onClick={() => handleLineClick(row, col, false)}
-            onMouseEnter={() => handleMouseEnter(row, col, false)}
-            onMouseLeave={handleMouseLeave}
+            onMouseEnter={() => handleLineMouseEnter(row, col, false)}
+            onMouseLeave={handleLineMouseLeave}
           />
         ))
       )}
@@ -87,10 +115,12 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
       {/* Dots */}
       {Array.from({ length: size + 1 }, (_, row) =>
         Array.from({ length: size + 1 }, (_, col) => (
-          <div
+          <button
             key={`d-${row}-${col}`}
-            className={getDotClass}
+            className={getDotClass(row, col)}
             style={{ top: row * 48, left: col * 48 }}
+            onClick={() => handleDotClick(row, col)}
+            disabled={currentPlayer === "computer"}
           />
         ))
       )}
