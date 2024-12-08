@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Tetris from "./pages/Tetris";
 import Snake from "./pages/Snake";
+import FlappyBird from "./pages/FlappyBird";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/tetris" element={<Tetris />} />
           <Route path="/snake" element={<Snake />} />
+          <Route path="/flappy-bird" element={<FlappyBird />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

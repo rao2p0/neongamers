@@ -16,6 +16,11 @@ const Index = () => {
       path: "/snake",
       image: "/lovable-uploads/37d7986f-390e-46cf-a105-1466ac930198.png",
     },
+    {
+      title: "Flappy Bird",
+      path: "/flappy-bird",
+      image: "/lovable-uploads/970e8a81-557c-4f50-a698-f552796794c7.png", // Using Tetris image temporarily
+    },
   ];
 
   return (
@@ -24,7 +29,7 @@ const Index = () => {
         <h1 className="text-4xl font-bold text-center mb-8">Arcade Games</h1>
         <p className="text-center text-gray-400 mb-12">Choose a game to play</p>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {games.map((game) => (
             <Card key={game.title} className="bg-gray-800 border-gray-700 overflow-hidden">
               <img
