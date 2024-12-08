@@ -17,8 +17,11 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
                      hoveredLine?.col === col && 
                      hoveredLine?.isHorizontal === isHorizontal;
 
-    // Calculate line index based on position and orientation
-    const lineIndex = isHorizontal ? row * size + col : row + col * size;
+    // Get the correct line index based on position
+    const lineIndex = isHorizontal ? 
+      row * size + col : // For horizontal lines: row * width + col
+      row + col * size;  // For vertical lines: row + col * height
+
     const isDrawn = lines[isHorizontal ? 0 : 1][lineIndex];
 
     return cn(
@@ -26,7 +29,7 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
       isHorizontal ? "h-1 w-12" : "w-1 h-12",
       isDrawn ? "bg-purple-500" : 
       isHovered ? "bg-purple-400" : "bg-gray-300 hover:bg-purple-300",
-      currentPlayer === "computer" && "pointer-events-none"
+      currentPlayer === "computer" ? "pointer-events-none" : "cursor-pointer"
     );
   };
 
@@ -52,7 +55,7 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
             onClick={() => onLineClick(row, col, true)}
             onMouseEnter={() => setHoveredLine({ row, col, isHorizontal: true })}
             onMouseLeave={() => setHoveredLine(null)}
-            disabled={lines[0][row * size + col] || currentPlayer === "computer"}
+            disabled={lines[0][row * size + col]}
           />
         ))
       )}
@@ -67,7 +70,7 @@ const GameBoard = ({ size, onLineClick, lines, boxes, currentPlayer }: GameBoard
             onClick={() => onLineClick(row, col, false)}
             onMouseEnter={() => setHoveredLine({ row, col, isHorizontal: false })}
             onMouseLeave={() => setHoveredLine(null)}
-            disabled={lines[1][row + col * size] || currentPlayer === "computer"}
+            disabled={lines[1][row + col * size]}
           />
         ))
       )}

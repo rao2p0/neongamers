@@ -15,9 +15,9 @@ export const useDotsAndBoxes = (size: number) => {
 
   const checkBox = useCallback((row: number, col: number): string | null => {
     // Get the indices for the lines surrounding this box
-    const top = lines[0][row * size + col];
+    const top = row > 0 ? lines[0][row * size + col] : false;
     const bottom = lines[0][(row + 1) * size + col];
-    const left = lines[1][row + col * size];
+    const left = col > 0 ? lines[1][row + col * size] : false;
     const right = lines[1][row + (col + 1) * size];
 
     if (top && bottom && left && right) {
@@ -51,8 +51,8 @@ export const useDotsAndBoxes = (size: number) => {
           if (isHorizontal) {
             if (row > 0) {
               const top = lines[0][(row - 1) * size + col];
-              const left = lines[1][row - 1 + col * size];
-              const right = lines[1][row - 1 + (col + 1) * size];
+              const left = lines[1][(row - 1) + col * size];
+              const right = lines[1][(row - 1) + (col + 1) * size];
               if (top && left && right) completes = true;
             }
             if (row < size) {
@@ -64,8 +64,8 @@ export const useDotsAndBoxes = (size: number) => {
           } else {
             if (col > 0) {
               const left = lines[1][row + (col - 1) * size];
-              const top = lines[0][row * size + col - 1];
-              const bottom = lines[0][(row + 1) * size + col - 1];
+              const top = lines[0][row * size + (col - 1)];
+              const bottom = lines[0][(row + 1) * size + (col - 1)];
               if (left && top && bottom) completes = true;
             }
             if (col < size) {
@@ -113,6 +113,12 @@ export const useDotsAndBoxes = (size: number) => {
 
     const newLines = lines.map(arr => [...arr]);
     const lineIndex = isHorizontal ? row * size + col : row + col * size;
+    
+    // Check if the line is already drawn
+    if (newLines[isHorizontal ? 0 : 1][lineIndex]) {
+      return;
+    }
+    
     newLines[isHorizontal ? 0 : 1][lineIndex] = true;
     setLines(newLines);
 
