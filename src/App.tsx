@@ -12,6 +12,7 @@ import Hangman from "./pages/Hangman";
 import TicTacToe from "./pages/TicTacToe";
 import Sudoku from "./pages/Sudoku";
 import Breakout from "./pages/Breakout";
+import Wordle from "./pages/Wordle";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/tic-tac-toe" element={<TicTacToe />} />
           <Route path="/sudoku" element={<Sudoku />} />
           <Route path="/breakout" element={<Breakout />} />
+          <Route path="/wordle" element={<Wordle />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

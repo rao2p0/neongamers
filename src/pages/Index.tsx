@@ -46,6 +46,11 @@ const Index = () => {
       path: "/breakout",
       image: "/lovable-uploads/d3999e5b-cbd1-4b45-b9d0-a81d957db05f.png",
     },
+    {
+      title: "Wordle",
+      path: "/wordle",
+      image: "/lovable-uploads/ad1db81d-01be-48f7-b121-f94e508c0dbd.png",
+    },
   ];
 
   return (
