@@ -8,13 +8,11 @@ const Index = () => {
   const games = [
     {
       title: "Tetris",
-      description: "Classic block-stacking puzzle game",
       path: "/tetris",
       image: "/lovable-uploads/970e8a81-557c-4f50-a698-f552796794c7.png",
     },
     {
       title: "Snake",
-      description: "Classic snake game - eat food to grow longer",
       path: "/snake",
       image: "/lovable-uploads/37d7986f-390e-46cf-a105-1466ac930198.png",
     },
@@ -26,17 +24,16 @@ const Index = () => {
         <h1 className="text-4xl font-bold text-center mb-8">Arcade Games</h1>
         <p className="text-center text-gray-400 mb-12">Choose a game to play</p>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {games.map((game) => (
-            <Card key={game.title} className="bg-gray-800 border-gray-700">
+            <Card key={game.title} className="bg-gray-800 border-gray-700 overflow-hidden">
               <img
                 src={game.image}
                 alt={game.title}
-                className="w-full h-48 object-cover rounded-t-lg"
+                className="w-full h-80 object-cover"
               />
-              <div className="p-6">
-                <h2 className="text-2xl font-bold mb-2">{game.title}</h2>
-                <p className="text-gray-400 mb-4">{game.description}</p>
+              <div className="p-4">
+                <h2 className="text-2xl font-bold mb-4 text-white">{game.title}</h2>
                 <Button 
                   onClick={() => navigate(game.path)}
                   className="w-full bg-purple-600 hover:bg-purple-700"
