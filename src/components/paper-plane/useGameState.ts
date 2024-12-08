@@ -59,6 +59,11 @@ export const useGameState = () => {
     setRotation(planeVelocity * 2);
 
     setObstacles((prevObstacles) => {
+      // Only start adding obstacles after a delay
+      if (prevObstacles.length === 0 && timestamp < 1000) {
+        return [];
+      }
+
       const newObstacles = prevObstacles
         .map((obstacle) => ({
           ...obstacle,
@@ -67,7 +72,7 @@ export const useGameState = () => {
         .filter((obstacle) => obstacle.x > -OBSTACLE_WIDTH);
 
       if (prevObstacles.length === 0 || prevObstacles[prevObstacles.length - 1].x < GAME_WIDTH - 300) {
-        const height = Math.random() * (GAME_HEIGHT - OBSTACLE_GAP);
+        const height = Math.random() * (GAME_HEIGHT - OBSTACLE_GAP - 100);
         newObstacles.push({ x: GAME_WIDTH, height });
       }
 
@@ -76,6 +81,8 @@ export const useGameState = () => {
 
     // Collision detection
     obstacles.forEach((obstacle) => {
+      if (!isPlaying) return;
+
       const planeRight = 100 + PLANE_SIZE;
       const planeLeft = 100;
       const planeTop = planeY;
