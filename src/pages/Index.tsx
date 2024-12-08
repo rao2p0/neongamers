@@ -24,7 +24,7 @@ const Index = () => {
     {
       title: "Minesweeper",
       path: "/minesweeper",
-      image: "https://images.unsplash.com/photo-1485833077593-4278bba3f11f?auto=format&fit=crop&w=800&q=80",
+      image: "/lovable-uploads/d873acd0-6b85-4499-8805-3747a10cd63f.png",
     },
   ];
 
