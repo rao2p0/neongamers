@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const words = [
   "speed", "racing", "turbo", "nitro", "drift", "gear", "accelerate",
@@ -12,7 +11,6 @@ const words = [
 
 const TypingRacer = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [currentWord, setCurrentWord] = useState("");
   const [userInput, setUserInput] = useState("");
   const [score, setScore] = useState(0);
@@ -60,7 +58,7 @@ const TypingRacer = () => {
       setScore((prev) => prev + 1);
       setCurrentWord(getRandomWord());
       setUserInput("");
-      setCarPosition((prev) => Math.min(prev + 20, 80)); // Move car forward
+      setCarPosition((prev) => Math.min(prev + 20, 80));
       
       toast({
         title: "Correct!",
@@ -71,64 +69,63 @@ const TypingRacer = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
-      <Button
-        variant="outline"
-        size="icon"
-        className="absolute top-4 left-4"
-        onClick={() => navigate("/")}
-      >
-        <ArrowLeft className="h-4 w-4" />
-      </Button>
-
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8">Typing Racer</h1>
-
-        <div className="mb-8">
-          <div className="bg-gray-800 p-4 rounded-lg relative h-20 mb-4">
-            <div
-              className="absolute bottom-4 left-0 w-12 h-8 transition-all duration-300"
-              style={{ left: `${carPosition}%` }}
-            >
-              🏎️
-            </div>
-            <div className="absolute right-4 top-4">🏁</div>
-          </div>
-
-          <div className="flex justify-between text-sm mb-4">
-            <span>Score: {score}</span>
-            <span>Time: {timeLeft}s</span>
-          </div>
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="flex flex-col items-center gap-8">
+        <div className="flex items-center justify-between w-full">
+          <Link to="/" className="text-white hover:text-gray-300">
+            ← Back to Games
+          </Link>
+          <h1 className="text-4xl font-bold text-white">Typing Racer</h1>
+          <div className="w-20"></div>
         </div>
 
-        {!isPlaying ? (
-          <div className="text-center">
-            <Button
-              onClick={startGame}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-lg text-xl"
-            >
-              Start Game
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <div className="text-center text-3xl font-bold mb-4 text-purple-400">
-              {currentWord}
+        <div className="bg-gray-800 p-8 rounded-lg shadow-xl">
+          <div className="mb-8">
+            <div className="bg-gray-700 p-4 rounded-lg relative h-20 mb-4">
+              <div
+                className="absolute bottom-4 left-0 w-12 h-8 transition-all duration-300"
+                style={{ left: `${carPosition}%` }}
+              >
+                🏎️
+              </div>
+              <div className="absolute right-4 top-4">🏁</div>
             </div>
-            <input
-              type="text"
-              value={userInput}
-              onChange={handleInputChange}
-              className="w-full bg-gray-800 text-white px-4 py-2 rounded-lg text-center text-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Type the word here..."
-              autoFocus
-            />
-          </div>
-        )}
 
-        <div className="mt-8 text-center text-gray-400">
-          <p>Type the words as quickly as you can to move your car!</p>
-          <p>Race against time and reach the finish line.</p>
+            <div className="flex justify-between text-white text-sm mb-4">
+              <span>Score: {score}</span>
+              <span>Time: {timeLeft}s</span>
+            </div>
+          </div>
+
+          {!isPlaying ? (
+            <div className="text-center">
+              <Button
+                onClick={startGame}
+                className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-lg text-xl"
+              >
+                Start Game
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="text-center text-3xl font-bold mb-4 text-purple-400">
+                {currentWord}
+              </div>
+              <input
+                type="text"
+                value={userInput}
+                onChange={handleInputChange}
+                className="w-full bg-gray-700 text-white px-4 py-2 rounded-lg text-center text-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="Type the word here..."
+                autoFocus
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="text-white text-sm text-center">
+          Type the words as quickly as you can to move your car!<br/>
+          Race against time and reach the finish line.
         </div>
       </div>
     </div>
