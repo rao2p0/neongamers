@@ -10,6 +10,7 @@ import FlappyBird from "./pages/FlappyBird";
 import Minesweeper from "./pages/Minesweeper";
 import Hangman from "./pages/Hangman";
 import TicTacToe from "./pages/TicTacToe";
+import Sudoku from "./pages/Sudoku";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/minesweeper" element={<Minesweeper />} />
           <Route path="/hangman" element={<Hangman />} />
           <Route path="/tic-tac-toe" element={<TicTacToe />} />
+          <Route path="/sudoku" element={<Sudoku />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

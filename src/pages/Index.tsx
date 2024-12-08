@@ -36,6 +36,11 @@ const Index = () => {
       path: "/tic-tac-toe",
       image: "/lovable-uploads/a53f49b2-5623-4b84-a67b-c35dd1d052c7.png",
     },
+    {
+      title: "Sudoku",
+      path: "/sudoku",
+      image: "/lovable-uploads/9c4c54c2-03bf-48ac-b1d5-14dbe136a47a.png",
+    },
   ];
 
   return (
