@@ -26,6 +26,11 @@ const Index = () => {
       path: "/minesweeper",
       image: "/lovable-uploads/d873acd0-6b85-4499-8805-3747a10cd63f.png",
     },
+    {
+      title: "Hangman",
+      path: "/hangman",
+      image: "/lovable-uploads/0968f01e-5743-46f5-a775-b4434a17e8bc.png",
+    },
   ];
 
   return (

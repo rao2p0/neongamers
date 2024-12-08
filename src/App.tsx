@@ -8,6 +8,7 @@ import Tetris from "./pages/Tetris";
 import Snake from "./pages/Snake";
 import FlappyBird from "./pages/FlappyBird";
 import Minesweeper from "./pages/Minesweeper";
+import Hangman from "./pages/Hangman";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/snake" element={<Snake />} />
           <Route path="/flappy-bird" element={<FlappyBird />} />
           <Route path="/minesweeper" element={<Minesweeper />} />
+          <Route path="/hangman" element={<Hangman />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
