@@ -21,6 +21,11 @@ const Index = () => {
       path: "/flappy-bird",
       image: "/lovable-uploads/56a4bcea-80aa-4d31-b881-64891710670f.png",
     },
+    {
+      title: "Minesweeper",
+      path: "/minesweeper",
+      image: "https://images.unsplash.com/photo-1485833077593-4278bba3f11f?auto=format&fit=crop&w=800&q=80",
+    },
   ];
 
   return (
