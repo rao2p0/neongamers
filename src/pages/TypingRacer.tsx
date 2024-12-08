@@ -3,10 +3,14 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Link } from "react-router-dom";
 
+// Extended word list for more variety
 const words = [
   "speed", "racing", "turbo", "nitro", "drift", "gear", "accelerate",
   "brake", "engine", "track", "finish", "victory", "champion", "boost",
-  "velocity", "momentum", "throttle", "steering", "dashboard", "circuit"
+  "velocity", "momentum", "throttle", "steering", "dashboard", "circuit",
+  "pilot", "driver", "formula", "pitstop", "mechanic", "garage", "wheel",
+  "pedal", "clutch", "transmission", "aerodynamic", "suspension", "fuel",
+  "speedway", "racetrack", "competition", "qualifying", "performance", "lap"
 ];
 
 const TypingRacer = () => {
@@ -17,18 +21,36 @@ const TypingRacer = () => {
   const [timeLeft, setTimeLeft] = useState(30);
   const [isPlaying, setIsPlaying] = useState(false);
   const [carPosition, setCarPosition] = useState(0);
+  const [usedWords, setUsedWords] = useState<Set<string>>(new Set());
 
   const getRandomWord = useCallback(() => {
-    const randomIndex = Math.floor(Math.random() * words.length);
-    return words[randomIndex];
-  }, []);
+    // Filter out already used words
+    const availableWords = words.filter(word => !usedWords.has(word));
+    
+    // If all words have been used, return a random word from the full list
+    if (availableWords.length === 0) {
+      const randomIndex = Math.floor(Math.random() * words.length);
+      return words[randomIndex];
+    }
+
+    // Get a random word from available words
+    const randomIndex = Math.floor(Math.random() * availableWords.length);
+    const selectedWord = availableWords[randomIndex];
+    
+    // Add the word to used words
+    setUsedWords(prev => new Set([...prev, selectedWord]));
+    
+    return selectedWord;
+  }, [usedWords]);
 
   const startGame = () => {
     setIsPlaying(true);
     setScore(0);
     setTimeLeft(30);
     setCarPosition(0);
-    setCurrentWord(getRandomWord());
+    setUsedWords(new Set()); // Reset used words at game start
+    const firstWord = getRandomWord();
+    setCurrentWord(firstWord);
     setUserInput("");
   };
 
