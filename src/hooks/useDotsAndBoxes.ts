@@ -32,7 +32,7 @@ export const useDotsAndBoxes = (size: number) => {
       for (let i = 0; i < maxIndex; i++) {
         if (!lines[isHorizontal][i]) {
           // Try this move
-          const newLines = lines.map(arr => [...arr]);
+          const newLines = lines.map(arr => arr.map(val => Boolean(val)));
           newLines[isHorizontal][i] = true;
           
           // Check if this move completes any boxes
@@ -73,7 +73,7 @@ export const useDotsAndBoxes = (size: number) => {
             return {
               row: isHorizontal ? Math.floor(i / size) : i % size,
               col: isHorizontal ? i % size : Math.floor(i / size),
-              isHorizontal
+              isHorizontal: Boolean(isHorizontal)
             };
           }
         }
@@ -89,7 +89,7 @@ export const useDotsAndBoxes = (size: number) => {
           availableMoves.push({
             row: isHorizontal ? Math.floor(i / size) : i % size,
             col: isHorizontal ? i % size : Math.floor(i / size),
-            isHorizontal
+            isHorizontal: Boolean(isHorizontal)
           });
         }
       }
