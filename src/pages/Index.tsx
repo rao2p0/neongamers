@@ -56,11 +56,6 @@ const Index = () => {
       path: "/paper-plane",
       image: "/lovable-uploads/9c1c55a3-3dcf-42f8-98d6-6705f90f72ed.png",
     },
-    {
-      title: "Dots and Boxes",
-      path: "/dots-and-boxes",
-      image: "/lovable-uploads/25bab696-524d-44e7-8b57-6a2b3afbac4e.png",
-    },
   ];
 
   return (
