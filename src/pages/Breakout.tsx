@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { Block, drawBlocks, initializeBlocks, checkBlockCollisions } from "@/components/breakout/Block";
 import { BallState, drawBall, updateBall } from "@/components/breakout/Ball";
 import { PaddleState, drawPaddle, updatePaddlePosition } from "@/components/breakout/Paddle";
+import { toast } from "sonner";
 
 const GAME_CONFIG = {
   paddleWidth: 100,
@@ -93,6 +94,14 @@ const Breakout = () => {
       // Game over condition
       if (newBall.y + GAME_CONFIG.ballRadius > canvas.height) {
         setGameStarted(false);
+        toast.error("Game Over! Try again!");
+        return prevBall;
+      }
+
+      // Check win condition
+      if (blocks.every(block => !block.visible)) {
+        setGameStarted(false);
+        toast.success("Congratulations! You've won!");
         return prevBall;
       }
 
