@@ -12,7 +12,12 @@ const Index = () => {
       path: "/tetris",
       image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&q=80&w=300&h=200",
     },
-    // More games can be added here later
+    {
+      title: "Snake",
+      description: "Classic snake game - eat food to grow longer",
+      path: "/snake",
+      image: "https://images.unsplash.com/photo-1605870445919-838d190e8e1b?auto=format&fit=crop&q=80&w=300&h=200",
+    },
   ];
 
   return (
