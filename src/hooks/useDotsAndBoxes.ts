@@ -2,10 +2,12 @@ import { useState, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 
 export const useDotsAndBoxes = (size: number) => {
+  // Initialize horizontal and vertical lines separately
   const [lines, setLines] = useState<boolean[][]>([
     Array(size * (size + 1)).fill(false), // horizontal lines
     Array((size + 1) * size).fill(false), // vertical lines
   ]);
+  
   const [boxes, setBoxes] = useState<string[][]>(
     Array(size).fill(null).map(() => Array(size).fill(""))
   );
@@ -14,11 +16,17 @@ export const useDotsAndBoxes = (size: number) => {
   const [gameOver, setGameOver] = useState(false);
 
   const checkBox = useCallback((row: number, col: number): string | null => {
-    // Get the indices for the lines surrounding this box
-    const top = lines[0][row * size + col];
-    const bottom = lines[0][(row + 1) * size + col];
-    const left = lines[1][row + col * size];
-    const right = lines[1][row + (col + 1) * size];
+    // Get indices for the lines surrounding this box
+    const topLineIndex = row * size + col;
+    const bottomLineIndex = (row + 1) * size + col;
+    const leftLineIndex = row + col * size;
+    const rightLineIndex = row + (col + 1) * size;
+
+    // Check if all four lines are drawn
+    const top = lines[0][topLineIndex];
+    const bottom = lines[0][bottomLineIndex];
+    const left = lines[1][leftLineIndex];
+    const right = lines[1][rightLineIndex];
 
     if (top && bottom && left && right) {
       return currentPlayer;
@@ -50,38 +58,34 @@ export const useDotsAndBoxes = (size: number) => {
           let completes = false;
           if (isHorizontal) {
             if (row > 0) {
-              const top = lines[0][(row - 1) * size + col];
-              const left = lines[1][(row - 1) + col * size];
-              const right = lines[1][(row - 1) + (col + 1) * size];
-              if (top && left && right) completes = true;
+              const topLineIndex = (row - 1) * size + col;
+              const leftLineIndex = (row - 1) + col * size;
+              const rightLineIndex = (row - 1) + (col + 1) * size;
+              if (lines[0][topLineIndex] && lines[1][leftLineIndex] && lines[1][rightLineIndex]) completes = true;
             }
             if (row < size) {
-              const bottom = lines[0][(row + 1) * size + col];
-              const left = lines[1][row + col * size];
-              const right = lines[1][row + (col + 1) * size];
-              if (bottom && left && right) completes = true;
+              const bottomLineIndex = (row + 1) * size + col;
+              const leftLineIndex = row + col * size;
+              const rightLineIndex = row + (col + 1) * size;
+              if (lines[0][bottomLineIndex] && lines[1][leftLineIndex] && lines[1][rightLineIndex]) completes = true;
             }
           } else {
             if (col > 0) {
-              const left = lines[1][row + (col - 1) * size];
-              const top = lines[0][row * size + (col - 1)];
-              const bottom = lines[0][(row + 1) * size + (col - 1)];
-              if (left && top && bottom) completes = true;
+              const leftLineIndex = row + (col - 1) * size;
+              const topLineIndex = row * size + (col - 1);
+              const bottomLineIndex = (row + 1) * size + (col - 1);
+              if (lines[1][leftLineIndex] && lines[0][topLineIndex] && lines[0][bottomLineIndex]) completes = true;
             }
             if (col < size) {
-              const right = lines[1][row + (col + 1) * size];
-              const top = lines[0][row * size + col];
-              const bottom = lines[0][(row + 1) * size + col];
-              if (right && top && bottom) completes = true;
+              const rightLineIndex = row + (col + 1) * size;
+              const topLineIndex = row * size + col;
+              const bottomLineIndex = (row + 1) * size + col;
+              if (lines[1][rightLineIndex] && lines[0][topLineIndex] && lines[0][bottomLineIndex]) completes = true;
             }
           }
           
           if (completes) {
-            return {
-              row,
-              col,
-              isHorizontal: Boolean(isHorizontal)
-            };
+            return { row, col, isHorizontal: Boolean(isHorizontal) };
           }
         }
       }
@@ -111,42 +115,76 @@ export const useDotsAndBoxes = (size: number) => {
   const makeMove = useCallback((row: number, col: number, isHorizontal: boolean) => {
     if (gameOver) return;
 
-    const newLines = lines.map(arr => [...arr]);
+    // Calculate the correct line index based on orientation
     const lineIndex = isHorizontal ? row * size + col : row + col * size;
     
     // Check if the line is already drawn
-    if (newLines[isHorizontal ? 0 : 1][lineIndex]) {
+    if (lines[isHorizontal ? 0 : 1][lineIndex]) {
       return;
     }
-    
+
+    // Update lines state
+    const newLines = lines.map(arr => [...arr]);
     newLines[isHorizontal ? 0 : 1][lineIndex] = true;
     setLines(newLines);
 
     let boxCompleted = false;
     const newBoxes = [...boxes.map(row => [...row])];
 
-    // Check if any boxes were completed
-    for (let r = 0; r < size; r++) {
-      for (let c = 0; c < size; c++) {
-        if (!boxes[r][c]) {
-          const boxOwner = checkBox(r, c);
+    // Check surrounding boxes for completion
+    const checkSurroundingBoxes = () => {
+      if (isHorizontal) {
+        // Check box above the line (if not top row)
+        if (row > 0) {
+          const boxOwner = checkBox(row - 1, col);
           if (boxOwner) {
-            newBoxes[r][c] = boxOwner;
+            newBoxes[row - 1][col] = boxOwner;
             boxCompleted = true;
-            setScores(prev => ({
-              ...prev,
-              [boxOwner]: prev[boxOwner as keyof typeof prev] + 1
-            }));
+          }
+        }
+        // Check box below the line (if not bottom row)
+        if (row < size) {
+          const boxOwner = checkBox(row, col);
+          if (boxOwner) {
+            newBoxes[row][col] = boxOwner;
+            boxCompleted = true;
+          }
+        }
+      } else {
+        // Check box to the left of the line (if not leftmost column)
+        if (col > 0) {
+          const boxOwner = checkBox(row, col - 1);
+          if (boxOwner) {
+            newBoxes[row][col - 1] = boxOwner;
+            boxCompleted = true;
+          }
+        }
+        // Check box to the right of the line (if not rightmost column)
+        if (col < size) {
+          const boxOwner = checkBox(row, col);
+          if (boxOwner) {
+            newBoxes[row][col] = boxOwner;
+            boxCompleted = true;
           }
         }
       }
-    }
+    };
 
+    checkSurroundingBoxes();
     setBoxes(newBoxes);
+
+    if (boxCompleted) {
+      setScores(prev => ({
+        ...prev,
+        [currentPlayer]: prev[currentPlayer] + 1
+      }));
+    }
 
     // Check if game is over
     const totalBoxes = size * size;
-    if (scores.player + scores.computer + (boxCompleted ? 1 : 0) === totalBoxes) {
+    const newTotalScore = scores.player + scores.computer + (boxCompleted ? 1 : 0);
+    
+    if (newTotalScore === totalBoxes) {
       setGameOver(true);
       const winner = scores.player > scores.computer ? "player" : "computer";
       toast.success(`Game Over! ${winner === "player" ? "You" : "Computer"} won!`);
@@ -157,7 +195,7 @@ export const useDotsAndBoxes = (size: number) => {
     if (!boxCompleted) {
       setCurrentPlayer(current => current === "player" ? "computer" : "player");
     }
-  }, [lines, boxes, scores, gameOver, size, checkBox]);
+  }, [lines, boxes, scores, gameOver, size, checkBox, currentPlayer]);
 
   // Computer's turn
   useEffect(() => {
