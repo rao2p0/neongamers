@@ -31,6 +31,11 @@ const Index = () => {
       path: "/hangman",
       image: "/lovable-uploads/0968f01e-5743-46f5-a775-b4434a17e8bc.png",
     },
+    {
+      title: "Tic Tac Toe",
+      path: "/tic-tac-toe",
+      image: "/lovable-uploads/tic-tac-toe.png",
+    },
   ];
 
   return (
