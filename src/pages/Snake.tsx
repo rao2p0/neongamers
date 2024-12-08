@@ -136,7 +136,7 @@ const Snake = () => {
         </div>
 
         <div className="relative bg-gray-800 p-4 rounded-lg">
-          <div className="grid grid-cols-32 gap-0" style={{ aspectRatio: '16/9' }}>
+          <div className="grid grid-cols-32 gap-0 max-w-[960px] w-[90vw]" style={{ aspectRatio: '16/9' }}>
             {Array.from({ length: GRID_WIDTH * GRID_HEIGHT }).map((_, index) => {
               const x = Math.floor(index % GRID_WIDTH);
               const y = Math.floor(index / GRID_WIDTH);
@@ -146,7 +146,7 @@ const Snake = () => {
               return (
                 <div
                   key={index}
-                  className={`w-3 h-3 border border-gray-700 ${
+                  className={`w-full h-full border border-gray-700 aspect-square ${
                     isSnake ? "bg-green-500" : isFood ? "bg-red-500" : "bg-gray-900"
                   }`}
                 />
