@@ -11,6 +11,7 @@ import Minesweeper from "./pages/Minesweeper";
 import Hangman from "./pages/Hangman";
 import TicTacToe from "./pages/TicTacToe";
 import Sudoku from "./pages/Sudoku";
+import Breakout from "./pages/Breakout";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/hangman" element={<Hangman />} />
           <Route path="/tic-tac-toe" element={<TicTacToe />} />
           <Route path="/sudoku" element={<Sudoku />} />
+          <Route path="/breakout" element={<Breakout />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

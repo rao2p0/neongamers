@@ -41,6 +41,11 @@ const Index = () => {
       path: "/sudoku",
       image: "/lovable-uploads/9c4c54c2-03bf-48ac-b1d5-14dbe136a47a.png",
     },
+    {
+      title: "Breakout",
+      path: "/breakout",
+      image: "/lovable-uploads/d3999e5b-cbd1-4b45-b9d0-a81d957db05f.png",
+    },
   ];
 
   return (
@@ -51,7 +56,7 @@ const Index = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {games.map((game) => (
-            <Card key={game.title} className="bg-gray-800 border-gray-700 overflow-hidden">
+            <Card key={game.title} className="bg-gray-800 border-gray-700 overflow-hidden hover:scale-105 transition-transform duration-300">
               <img
                 src={game.image}
                 alt={game.title}
