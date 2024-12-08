@@ -34,7 +34,7 @@ const Index = () => {
     {
       title: "Tic Tac Toe",
       path: "/tic-tac-toe",
-      image: "/lovable-uploads/tic-tac-toe.png",
+      image: "/lovable-uploads/a53f49b2-5623-4b84-a67b-c35dd1d052c7.png",
     },
   ];
 
