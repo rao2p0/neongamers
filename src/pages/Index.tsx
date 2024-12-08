@@ -16,7 +16,7 @@ const Index = () => {
       title: "Snake",
       description: "Classic snake game - eat food to grow longer",
       path: "/snake",
-      image: "https://images.unsplash.com/photo-1605870445919-838d190e8e1b?auto=format&fit=crop&q=80&w=300&h=200",
+      image: "https://images.unsplash.com/photo-1582562124811-c09040d0a901?auto=format&fit=crop&q=80&w=300&h=200",
     },
   ];
 
