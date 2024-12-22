@@ -23,6 +23,11 @@ const Index = () => {
 
   const games = [
     {
+      title: "Typing Racer",
+      path: "/typing-racer",
+      image: "/lovable-uploads/fc201a99-910b-460c-beb4-ae96f96e0137.png",
+    },
+    {
       title: "Tetris",
       path: "/tetris",
       image: "/lovable-uploads/970e8a81-557c-4f50-a698-f552796794c7.png",
@@ -76,11 +81,6 @@ const Index = () => {
       title: "Rock Paper Scissors",
       path: "/rock-paper-scissors",
       image: "/lovable-uploads/fdc12c29-240c-4c9b-84e7-e77f1aea8fff.png",
-    },
-    {
-      title: "Typing Racer",
-      path: "/typing-racer",
-      image: "/lovable-uploads/fc201a99-910b-460c-beb4-ae96f96e0137.png",
     },
   ];
 
