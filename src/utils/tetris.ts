@@ -66,16 +66,23 @@ export const randomTetromino = (): TetrominoType => {
 };
 
 export const rotateMatrix = (matrix: number[][]): number[][] => {
-  const N = matrix.length;
-  const ret: number[][] = Array.from({ length: N }, () => Array(N).fill(0));
+  // Get dimensions of the matrix
+  const rows = matrix.length;
+  const cols = matrix[0].length;
   
-  for (let i = 0; i < N; ++i) {
-    for (let j = 0; j < N; ++j) {
-      ret[i][j] = matrix[N - 1 - j][i];
+  // Create a new matrix with swapped dimensions
+  const rotated: number[][] = Array.from({ length: cols }, () => 
+    Array(rows).fill(0)
+  );
+  
+  // Perform rotation
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      rotated[j][rows - 1 - i] = matrix[i][j];
     }
   }
   
-  return ret;
+  return rotated;
 };
 
 export const isValidMove = (
