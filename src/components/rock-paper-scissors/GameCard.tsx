@@ -33,7 +33,7 @@ const GameCard = ({ type, onClick, isSelected }: GameCardProps) => {
         />
       </div>
       <div className="absolute bottom-0 left-0 right-0 text-center p-2 bg-black/50 backdrop-blur-sm">
-        <p className="text-lg font-bold capitalize">{type}</p>
+        <p className="text-lg font-bold capitalize text-white">{type}</p>
       </div>
     </button>
   );
