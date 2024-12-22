@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useSessionContext } from "@supabase/auth-helpers-react";
@@ -113,7 +112,25 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-900 text-white relative">
+      <div className="absolute top-4 right-4">
+        {session ? (
+          <Button 
+            onClick={handleSignOut}
+            className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900"
+          >
+            Sign Out
+          </Button>
+        ) : (
+          <Button 
+            onClick={() => navigate("/auth")}
+            className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900"
+          >
+            Sign In
+          </Button>
+        )}
+      </div>
+
       <div className="container mx-auto px-4 py-8">
         <header className="flex flex-col items-center justify-center space-y-4 mb-12">
           <img 
@@ -125,23 +142,6 @@ const Index = () => {
             <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
               Arcade Games
             </h1>
-          </div>
-          <div className="mt-4">
-            {session ? (
-              <Button 
-                onClick={handleSignOut}
-                className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900"
-              >
-                Sign Out
-              </Button>
-            ) : (
-              <Button 
-                onClick={() => navigate("/auth")}
-                className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900"
-              >
-                Sign In
-              </Button>
-            )}
           </div>
         </header>
         
