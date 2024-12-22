@@ -123,7 +123,7 @@ const Index = () => {
             <Button 
               variant="outline" 
               onClick={handleSignOut}
-              className="text-white hover:text-gray-900"
+              className="border-white text-white hover:text-gray-900"
             >
               Sign Out
             </Button>
@@ -131,7 +131,7 @@ const Index = () => {
             <Button 
               variant="outline" 
               onClick={() => navigate("/auth")}
-              className="text-white hover:text-gray-900"
+              className="border-white text-white hover:text-gray-900"
             >
               Sign In
             </Button>
