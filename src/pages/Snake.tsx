@@ -6,8 +6,8 @@ import { Link } from "react-router-dom";
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 type Position = { x: number; y: number };
 
-const GRID_WIDTH = 32;  // Changed from 20
-const GRID_HEIGHT = 18; // Changed from 20 to maintain 16:9 ratio
+const GRID_WIDTH = 32;
+const GRID_HEIGHT = 18;
 
 const Snake = () => {
   const [snake, setSnake] = useState<Position[]>([{ x: Math.floor(GRID_WIDTH/2), y: Math.floor(GRID_HEIGHT/2) }]);
@@ -135,6 +135,19 @@ const Snake = () => {
           <div className="w-20"></div>
         </div>
 
+        <div className="flex items-center gap-4">
+          <div className="bg-gray-800 p-4 rounded-lg">
+            <p className="text-white">Score: {score}</p>
+          </div>
+          <Button
+            onClick={() => (isPlaying ? setIsPlaying(false) : startGame())}
+            className="w-32 text-lg font-semibold"
+            size="lg"
+          >
+            {isPlaying ? "Pause" : "Start"}
+          </Button>
+        </div>
+
         <div className="relative bg-gray-800 p-4 rounded-lg">
           <div className="grid grid-cols-32 gap-0 max-w-[960px] w-[90vw]" style={{ aspectRatio: '16/9' }}>
             {Array.from({ length: GRID_WIDTH * GRID_HEIGHT }).map((_, index) => {
@@ -153,18 +166,6 @@ const Snake = () => {
               );
             })}
           </div>
-        </div>
-
-        <div className="flex flex-col items-center gap-4">
-          <div className="bg-gray-800 p-4 rounded-lg">
-            <p className="text-white">Score: {score}</p>
-          </div>
-          <Button
-            onClick={() => (isPlaying ? setIsPlaying(false) : startGame())}
-            className="w-32"
-          >
-            {isPlaying ? "Pause" : "Start"}
-          </Button>
         </div>
 
         <div className="text-white text-sm text-center">
