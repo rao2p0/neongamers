@@ -90,11 +90,9 @@ const Index = () => {
     
     if (!session) {
       if (!hasPlayedGame) {
-        // First time playing, allow access and set flag
         localStorage.setItem('hasPlayedGame', 'true');
         navigate(path);
       } else {
-        // Already played one game, require login
         toast({
           title: "Login Required",
           description: "You've played your first game! Please log in to continue playing.",
@@ -117,6 +115,13 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col items-center mb-12">
+          <img 
+            src="/lovable-uploads/16d00df9-d9d8-4682-90d0-cbed94667f75.png" 
+            alt="Neon Gamers Logo" 
+            className="w-48 h-48 mb-6"
+          />
+        </div>
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold">Arcade Games</h1>
           {session ? (
