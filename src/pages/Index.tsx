@@ -22,84 +22,30 @@ const Index = () => {
     }
   };
 
-  const games = [
-    {
-      title: "Tetris",
-      path: "/tetris",
-      image: "/lovable-uploads/970e8a81-557c-4f50-a698-f552796794c7.png",
-    },
-    {
-      title: "Snake",
-      path: "/snake",
-      image: "/lovable-uploads/37d7986f-390e-46cf-a105-1466ac930198.png",
-    },
-    {
-      title: "Flappy Bird",
-      path: "/flappy-bird",
-      image: "/lovable-uploads/56a4bcea-80aa-4d31-b881-64891710670f.png",
-    },
-    {
-      title: "Minesweeper",
-      path: "/minesweeper",
-      image: "/lovable-uploads/d873acd0-6b85-4499-8805-3747a10cd63f.png",
-    },
-    {
-      title: "Hangman",
-      path: "/hangman",
-      image: "/lovable-uploads/0968f01e-5743-46f5-a775-b4434a17e8bc.png",
-    },
-    {
-      title: "Tic Tac Toe",
-      path: "/tic-tac-toe",
-      image: "/lovable-uploads/a53f49b2-5623-4b84-a67b-c35dd1d052c7.png",
-    },
-    {
-      title: "Sudoku",
-      path: "/sudoku",
-      image: "/lovable-uploads/9c4c54c2-03bf-48ac-b1d5-14dbe136a47a.png",
-    },
-    {
-      title: "Breakout",
-      path: "/breakout",
-      image: "/lovable-uploads/d3999e5b-cbd1-4b45-b9d0-a81d957db05f.png",
-    },
-    {
-      title: "Wordle",
-      path: "/wordle",
-      image: "/lovable-uploads/ad1db81d-01be-48f7-b121-f94e508c0dbd.png",
-    },
-    {
-      title: "Paper Plane",
-      path: "/paper-plane",
-      image: "/lovable-uploads/9c1c55a3-3dcf-42f8-98d6-6705f90f72ed.png",
-    },
-    {
-      title: "Rock Paper Scissors",
-      path: "/rock-paper-scissors",
-      image: "/lovable-uploads/fdc12c29-240c-4c9b-84e7-e77f1aea8fff.png",
-    },
-    {
-      title: "Typing Racer",
-      path: "/typing-racer",
-      image: "/lovable-uploads/fc201a99-910b-460c-beb4-ae96f96e0137.png",
-    },
-  ];
-
   const handleGameClick = (path: string) => {
+    const hasPlayedGame = localStorage.getItem('hasPlayedGame');
+    
     if (!session) {
-      toast({
-        title: "Login Required",
-        description: "Please log in to play games",
-        action: (
-          <Button 
-            onClick={() => navigate("/auth")}
-            variant="default"
-            className="bg-purple-600 hover:bg-purple-700"
-          >
-            Login
-          </Button>
-        ),
-      });
+      if (!hasPlayedGame) {
+        // First time playing, allow access and set flag
+        localStorage.setItem('hasPlayedGame', 'true');
+        navigate(path);
+      } else {
+        // Already played one game, require login
+        toast({
+          title: "Login Required",
+          description: "You've played your first game! Please log in to continue playing.",
+          action: (
+            <Button 
+              onClick={() => navigate("/auth")}
+              variant="default"
+              className="bg-purple-600 hover:bg-purple-700"
+            >
+              Login
+            </Button>
+          ),
+        });
+      }
     } else {
       navigate(path);
     }
