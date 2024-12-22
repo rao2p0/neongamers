@@ -121,17 +121,15 @@ const Index = () => {
           <h1 className="text-4xl font-bold">Arcade Games</h1>
           {session ? (
             <Button 
-              variant="outline" 
               onClick={handleSignOut}
-              className="border-white text-white hover:text-gray-900"
+              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900"
             >
               Sign Out
             </Button>
           ) : (
             <Button 
-              variant="outline" 
               onClick={() => navigate("/auth")}
-              className="border-white text-white hover:text-gray-900"
+              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900"
             >
               Sign In
             </Button>
