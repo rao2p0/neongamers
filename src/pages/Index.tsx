@@ -112,40 +112,33 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white relative">
-      <div className="absolute top-4 right-4">
-        {session ? (
-          <Button 
-            onClick={handleSignOut}
-            className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900"
-          >
-            Sign Out
-          </Button>
-        ) : (
-          <Button 
-            onClick={() => navigate("/auth")}
-            className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900"
-          >
-            Sign In
-          </Button>
-        )}
-      </div>
-
+    <div className="min-h-screen bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-8">
-        <header className="flex flex-col items-center justify-center space-y-4 mb-12">
+        <header className="flex items-center justify-between mb-12">
           <img 
             src="/lovable-uploads/16d00df9-d9d8-4682-90d0-cbed94667f75.png" 
             alt="Neon Gamers Logo" 
-            className="w-32 h-32 mb-2"
+            className="w-16 h-16"
           />
-          <div className="text-center">
-            <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
-              Arcade Games
-            </h1>
-          </div>
+          <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+            Arcade Games
+          </h1>
+          {session ? (
+            <Button 
+              onClick={handleSignOut}
+              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900"
+            >
+              Sign Out
+            </Button>
+          ) : (
+            <Button 
+              onClick={() => navigate("/auth")}
+              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900"
+            >
+              Sign In
+            </Button>
+          )}
         </header>
-        
-        <p className="text-center text-gray-400 mb-12">Choose a game to play</p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {games.map((game) => (
