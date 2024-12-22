@@ -18,11 +18,11 @@ const PlayerSelection = ({ playerSymbol, onSymbolChange, onStartGame }: PlayerSe
         className="flex gap-4 mb-6"
       >
         <div className="flex items-center space-x-2">
-          <RadioGroupItem value="X" id="X" />
+          <RadioGroupItem value="X" id="X" className="border-white text-white" />
           <Label htmlFor="X" className="text-white">Play as X</Label>
         </div>
         <div className="flex items-center space-x-2">
-          <RadioGroupItem value="O" id="O" />
+          <RadioGroupItem value="O" id="O" className="border-white text-white" />
           <Label htmlFor="O" className="text-white">Play as O</Label>
         </div>
       </RadioGroup>
