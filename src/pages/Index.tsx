@@ -4,21 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useSessionContext } from "@supabase/auth-helpers-react";
 
 const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/auth");
-      }
-    };
-
-    checkAuth();
-  }, [navigate]);
+  const { session } = useSessionContext();
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
@@ -28,8 +19,6 @@ const Index = () => {
         title: "Error signing out",
         description: error.message,
       });
-    } else {
-      navigate("/auth");
     }
   };
 
@@ -96,18 +85,48 @@ const Index = () => {
     },
   ];
 
+  const handleGameClick = (path: string) => {
+    if (!session) {
+      toast({
+        title: "Login Required",
+        description: "Please log in to play games",
+        action: (
+          <Button 
+            onClick={() => navigate("/auth")}
+            variant="default"
+            className="bg-purple-600 hover:bg-purple-700"
+          >
+            Login
+          </Button>
+        ),
+      });
+    } else {
+      navigate(path);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold">Arcade Games</h1>
-          <Button 
-            variant="outline" 
-            onClick={handleSignOut}
-            className="text-white hover:text-gray-900"
-          >
-            Sign Out
-          </Button>
+          {session ? (
+            <Button 
+              variant="outline" 
+              onClick={handleSignOut}
+              className="text-white hover:text-gray-900"
+            >
+              Sign Out
+            </Button>
+          ) : (
+            <Button 
+              variant="outline" 
+              onClick={() => navigate("/auth")}
+              className="text-white hover:text-gray-900"
+            >
+              Sign In
+            </Button>
+          )}
         </div>
         <p className="text-center text-gray-400 mb-12">Choose a game to play</p>
         
@@ -122,7 +141,7 @@ const Index = () => {
               <div className="p-4">
                 <h2 className="text-2xl font-bold mb-4 text-white">{game.title}</h2>
                 <Button 
-                  onClick={() => navigate(game.path)}
+                  onClick={() => handleGameClick(game.path)}
                   className="w-full bg-purple-600 hover:bg-purple-700"
                 >
                   Play Now
