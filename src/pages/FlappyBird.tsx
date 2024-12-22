@@ -119,6 +119,21 @@ const FlappyBird = () => {
           <div className="w-20"></div>
         </div>
 
+        <div className="flex items-center gap-4 mb-4">
+          <div className="bg-gray-800 p-4 rounded-lg">
+            <p className="text-white">Score: {score}</p>
+          </div>
+          {!isPlaying && (
+            <Button
+              onClick={startGame}
+              className="w-32 text-lg font-semibold bg-purple-600 hover:bg-purple-700"
+              size="lg"
+            >
+              Start Game
+            </Button>
+          )}
+        </div>
+
         <div 
           className="relative bg-blue-500 w-[800px] h-[500px] overflow-hidden"
           onClick={jump}
@@ -158,20 +173,6 @@ const FlappyBird = () => {
               />
             </div>
           ))}
-        </div>
-
-        <div className="flex flex-col items-center gap-4">
-          <div className="bg-gray-800 p-4 rounded-lg">
-            <p className="text-white">Score: {score}</p>
-          </div>
-          {!isPlaying && (
-            <Button
-              onClick={startGame}
-              className="w-32 bg-purple-600 hover:bg-purple-700"
-            >
-              Start Game
-            </Button>
-          )}
         </div>
 
         <div className="text-white text-sm text-center">

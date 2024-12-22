@@ -135,13 +135,13 @@ const Snake = () => {
           <div className="w-20"></div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 mb-4">
           <div className="bg-gray-800 p-4 rounded-lg">
             <p className="text-white">Score: {score}</p>
           </div>
           <Button
             onClick={() => (isPlaying ? setIsPlaying(false) : startGame())}
-            className="w-32 text-lg font-semibold"
+            className="w-32 text-lg font-semibold bg-purple-600 hover:bg-purple-700"
             size="lg"
           >
             {isPlaying ? "Pause" : "Start"}

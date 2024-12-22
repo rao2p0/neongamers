@@ -159,23 +159,22 @@ const Breakout = () => {
           <div className="w-20"></div>
         </div>
 
-        <div className="bg-gray-800 p-8 rounded-lg shadow-xl">
-          <div className="flex justify-between items-center mb-6">
-            <Button 
-              className="bg-purple-600 hover:bg-purple-700"
-              onClick={startNewGame}
-            >
-              {gameStarted ? "Restart Game" : "New Game"}
-            </Button>
-          </div>
-
-          <canvas
-            ref={canvasRef}
-            width={800}
-            height={600}
-            className="bg-black"
-          />
+        <div className="flex items-center justify-center gap-4 mb-4">
+          <Button 
+            className="w-32 text-lg font-semibold bg-purple-600 hover:bg-purple-700"
+            size="lg"
+            onClick={startNewGame}
+          >
+            {gameStarted ? "Restart Game" : "New Game"}
+          </Button>
         </div>
+
+        <canvas
+          ref={canvasRef}
+          width={800}
+          height={600}
+          className="bg-black rounded-lg"
+        />
 
         <div className="text-white text-sm text-center">
           Use left and right arrow keys to move the paddle<br/>
