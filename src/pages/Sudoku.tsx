@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import SudokuBoard from "@/components/sudoku/SudokuBoard";
 import { useSudoku } from "@/hooks/useSudoku";
+import { LightbulbIcon } from "lucide-react";
 
 const Sudoku = () => {
   const {
@@ -12,6 +13,7 @@ const Sudoku = () => {
     handleCellChange,
     isValidCell,
     resetGame,
+    getHint,
   } = useSudoku();
 
   return (
@@ -26,12 +28,20 @@ const Sudoku = () => {
         </div>
 
         <div className="bg-gray-800 p-8 rounded-lg shadow-xl">
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex justify-between items-center mb-6 gap-4">
             <Button 
               onClick={resetGame}
               className="bg-purple-600 hover:bg-purple-700"
             >
               New Game
+            </Button>
+            <Button
+              onClick={getHint}
+              variant="secondary"
+              className="flex items-center gap-2"
+            >
+              <LightbulbIcon className="w-4 h-4" />
+              Hint
             </Button>
           </div>
 

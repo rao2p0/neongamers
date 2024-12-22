@@ -54,6 +54,19 @@ const isBoardComplete = (puzzle: string[][]): boolean => {
   return puzzle.every(row => row.every(cell => cell !== ''));
 };
 
+// Solution for the current puzzle (hardcoded for now)
+const solution = [
+  ["1", "4", "3", "8", "5", "7", "2", "9", "6"],
+  ["5", "3", "7", "1", "2", "6", "4", "8", "9"],
+  ["2", "8", "9", "6", "4", "3", "5", "7", "1"],
+  ["7", "2", "5", "3", "6", "1", "9", "4", "8"],
+  ["4", "1", "6", "7", "8", "9", "3", "5", "2"],
+  ["6", "9", "8", "2", "7", "4", "1", "3", "5"],
+  ["3", "5", "2", "4", "9", "8", "7", "1", "6"],
+  ["8", "4", "1", "5", "3", "2", "6", "9", "7"],
+  ["9", "7", "4", "9", "1", "5", "8", "2", "3"],
+];
+
 export const useSudoku = () => {
   const [puzzle, setPuzzle] = useState(() => generateInitialPuzzle());
   const [initialPuzzle] = useState(() => puzzle.map(row => [...row]));
@@ -80,6 +93,24 @@ export const useSudoku = () => {
     });
   }, [initialPuzzle]);
 
+  const getHint = useCallback(() => {
+    // Find an empty cell that hasn't been filled correctly
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        if (puzzle[row][col] === '' || puzzle[row][col] !== solution[row][col]) {
+          setPuzzle(current => {
+            const newPuzzle = current.map(r => [...r]);
+            newPuzzle[row][col] = solution[row][col];
+            return newPuzzle;
+          });
+          toast.success("Here's a hint for you!");
+          return;
+        }
+      }
+    }
+    toast.info("No more hints needed - you're doing great!");
+  }, [puzzle]);
+
   const isValidCell = useCallback((row: number, col: number): boolean => {
     return puzzle[row][col] === '' || isValidMove(puzzle, row, col, puzzle[row][col]);
   }, [puzzle]);
@@ -97,5 +128,6 @@ export const useSudoku = () => {
     handleCellChange,
     isValidCell,
     resetGame,
+    getHint,
   };
 };
